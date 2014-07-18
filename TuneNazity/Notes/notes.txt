@@ -1,0 +1,268 @@
+﻿ Use a checkbox inside the TreeViewItem with a trigger - the DataContext is key to routing it properly - 
+ the Tag is used to store the Tag of the TreeviewItem where the checkbox lives.
+ //
+ <CheckBox
+            DataContext="{Binding Source={StaticResource Locator}}"
+    		x:Name="myChkBox" 
+    		VerticalAlignment="Center"
+            Padding="5,0,0,0"
+            Tag="{Binding 
+                            RelativeSource={RelativeSource 
+                            Mode=FindAncestor, 
+                            AncestorType={x:Type TreeViewItem}}, 
+                            Path=Tag}"  
+                >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Click">
+                    <Command:EventToCommand Command="{Binding Main.CheckBoxManagerForSelectedItem}"
+                        CommandParameter="{Binding Tag, ElementName=myChkBox}"                        
+                    />
+                                                                
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
+    </CheckBox>
+
+
+	#region Code to Find any Element inside a TreeViewItem
+			
+			TreeViewItem temp = ((TreeViewItem) tree.SelectedItem);
+
+            ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(temp);
+            DataTemplate myDataTemplate = myContentPresenter.ContentTemplate;
+            CheckBox myCheckBox = myDataTemplate.FindName("myChkBox", myContentPresenter) as CheckBox;
+
+    #endregion //Code to Find any Element inside a TreeItem
+
+
+
+	<MultiTrigger>
+        <MultiTrigger.Conditions>
+            <Condition Property="IsSelected" Value="true" />
+            <Condition Property="IsSelectionActive" Value="false" />
+        </MultiTrigger.Conditions>
+        <Setter Property="Background"
+                TargetName="Bd"
+                Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+        <Setter Property="Foreground"
+                Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+</MultiTrigger>
+
+<MultiDataTrigger>
+    <MultiDataTrigger.Conditions>
+        <Condition Binding="{Binding (Model:TreeViewItemProps.IsFolderSelected), RelativeSource={RelativeSource AncestorType={x:Type TreeViewItem}, Mode=FindAncestor}}" Value="False" />
+        <Condition Binding="{Binding (Model:TreeViewItemProps.IsRootLevel), RelativeSource={RelativeSource AncestorType={x:Type TreeViewItem}, Mode=FindAncestor}}" Value="Drive" />
+    </MultiDataTrigger.Conditions>
+
+    <Setter Property="Source"
+            TargetName="img"
+            Value="/Images/HardDrive3.png" />
+</MultiDataTrigger>
+
+
+
+
+
+// iTunes
+
+int searchResult = 0;
+
+
+if (searchResult >= 1)
+{
+    // Get the biggest file and erase the rest
+    //
+    long maxValue = 0;
+    string theKey = "";
+
+    foreach (var pair in SimilarFilesList)
+    {
+        if (pair.Value > maxValue)
+        {
+            maxValue = pair.Value;
+            theKey = pair.Key;
+        }
+
+    }
+    // Assign the Biggest File to Itunes
+    //
+    fileTrack.Location = theKey;
+
+    // Enable Track and add it to the recovered Playlist
+
+    fileTrack.Enabled = true;
+    fileTrack.Comment = "Recovered by Tunenazity on " +
+                        DateTime.Now.ToLongDateString();
+
+
+
+						
+// Remove this entry from the dictionary and delete the rest
+//
+SimilarFilesList.Remove(theKey);
+//
+// 
+// Now Delete the Rest 
+
+foreach (var pair in SimilarFilesList)
+{
+
+    // Send File to Recycle Bin
+    //
+    string delLoc = pair.Key;
+    Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile
+        (delLoc, UIOption.OnlyErrorDialogs,
+        RecycleOption.SendToRecycleBin);
+
+}
+
+    // Clear the Dictionary
+    SimilarFilesList.Clear();
+
+
+
+	// Compare strings
+	//
+	int similarity = GetLevensteinDistance(trackFileName, pair.Value.FileName);
+                
+	if ( similarity <= 3)
+	{
+
+		// Do a comparision and assign if the match is more than 99% close
+		trackLocation = pair.Value.Path + "\\" + pair.Value.FileName;
+	}
+
+
+
+
+	    // Background Worker
+
+            using (var backgroundWorker = new BackgroundWorker())
+            {
+
+
+                backgroundWorker.DoWork += (s, e) =>
+                {
+                    #region Do Work
+
+
+                    #endregion - do work
+
+                };
+
+
+                backgroundWorker.ProgressChanged += (s, e) =>
+                {
+
+                    #region Progress Report
+
+                    // Progress indicator
+                    int i = e.ProgressPercentage;
+
+
+
+                    #endregion - progress report
+
+                };
+
+
+                backgroundWorker.RunWorkerCompleted += (s, e) =>
+                {
+
+                    #region Work Completed
+
+
+                    #endregion - work completed
+
+
+                };
+
+
+                backgroundWorker.RunWorkerAsync();
+                backgroundWorker.WorkerReportsProgress = true;
+            }
+
+
+
+
+
+// Function to handle Busy Issues with iTunes
+//
+bool success = false;
+while (!success)
+{
+
+    // Handle any errors incurred
+    try
+    {
+
+
+
+
+
+    }
+    catch(System.Runtime.InteropServices.COMException  ex)
+    {
+
+
+        #region iTunes is Busy
+
+        if ((ex.ErrorCode & 0xFFFF) == 0xC472 || ex.ErrorCode == -2147417846)
+        {
+            // iTunes is busy
+            System.Threading.Thread.Sleep(500); // Wait, and...
+
+            TrackName = "iTunes is busy.  Please close any dialog or messages pending....";
+
+            // Reset Counter or progress bar will be off
+            //                                                 
+            success = false; // ...try again
+        }
+        else if (ex.ErrorCode == -2147467259)
+        {
+            Debug.Print("File Location not accepted by dead track listing..");
+
+        }
+        else
+        {
+
+            // Re-throw!
+            throw;
+
+        }
+
+        #endregion
+
+    }
+
+}
+
+// Example of getting a track using a persitent ID
+
+ public LocalTrackInfo(IiTunes app, IITTrack track)
+        {
+            this.Name = track.Name;
+            this.Artist = track.Artist;
+
+            Int32 lid = 0, hid = 0; // I assign those in order to prevent the compiler to complain of false errors.
+            object ivec = (object)track;
+            (app ?? new iTunesApp()).GetITObjectPersistentIDs(ref ivec, out lid, out hid);
+
+            this.LowID = lid;
+            this.HighID = hid;
+        }
+
+
+
+
+
+		
+    // Sorted Dictionary
+
+    foreach (KeyValuePair<int, IITTrack> item in TrackIndexList.OrderBy(key2 => key2.Value.Duration))
+      {
+                                        
+      }
+
+
+    

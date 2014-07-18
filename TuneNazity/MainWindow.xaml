@@ -1,0 +1,1493 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" mc:Ignorable="d" x:Class="TuneNazity.MainWindow" 
+        Title="TuneNazity 1.1"
+        Height="615"
+        AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Width="762" HorizontalAlignment="Left" VerticalAlignment="Top" Icon="/TuneNazity;component/Images/Music.png" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+            	<ResourceDictionary Source="Skins/MainSkin.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <!--LIST VIEW START-->
+            <DataTemplate x:Key="lvImageStyle">
+                <Image x:Name="TheImage" />
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding Path=TrackStatus}" Value="NOT FOUND">
+                        <Setter TargetName="TheImage" Property="Source" Value="/Images/DeleteRed.png" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Path=TrackStatus}" Value="FOUND">
+                        <Setter TargetName="TheImage" Property="Source" Value="/Images/CheckMark.png" />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+
+            <DataTemplate x:Key="lvImageTexttyle">
+                <Border BorderThickness="0,0,0,0" BorderBrush="#6FBDE8">
+                    <Grid Margin="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Image x:Name="imgStatus" Source="/Images/icon_red.png" Width="24" Height="24" Grid.Column="0" HorizontalAlignment="Center" />
+                        <TextBlock VerticalAlignment="Center" Grid.Column="1" Width="Auto" Foreground="#FFDFE90A" />
+                    </Grid>
+                </Border>
+            </DataTemplate>
+
+            <DataTemplate x:Key="lvTextStyle">
+                <Border BorderThickness="0,0,0,0" BorderBrush="#6FBDE8">
+                    <TextBlock Margin="2" Text="{Binding}" VerticalAlignment="Center" Grid.Column="1" Foreground="#FFDFE90A" />
+                </Border>
+            </DataTemplate>
+
+            <Style x:Key="ListViewItemContainerStyle" TargetType="{x:Type ListViewItem}">
+                <Setter Property="Background" Value="#ffffff" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="Black" />
+                <Setter Property="Margin" Value="0,0,0,0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                            <Border x:Name="Bd" Background="{TemplateBinding Background}" SnapsToDevicePixels="true" BorderThickness="0,0,0,1" BorderBrush="#6FBDE8">
+                                <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected"  Value="true">
+                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#FF143c65" />
+                                    <Setter Property="Background" TargetName="Bd">
+                                        <Setter.Value>
+                                            <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                                                <LinearGradientBrush.GradientStops>
+                                                    <GradientStopCollection>
+                                                        <GradientStop Color="#FF75aac7" Offset="0"/>
+                                                        <GradientStop Color="#FF143c65" Offset="1"/>
+                                                    </GradientStopCollection>
+                                                </LinearGradientBrush.GradientStops>
+                                            </LinearGradientBrush>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Background" Value="#e0eff8" />
+                                </Trigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsSelected" Value="true" />
+                                        <Condition Property="Selector.IsSelectionActive" Value="True" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" TargetName="Bd">
+                                        <Setter.Value>
+                                            <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                                                <LinearGradientBrush.GradientStops>
+                                                    <GradientStopCollection>
+                                                        <GradientStop Color="#FF75aac7" Offset="0"/>
+                                                        <GradientStop Color="#FF143c65" Offset="1"/>
+                                                    </GradientStopCollection>
+                                                </LinearGradientBrush.GradientStops>
+                                            </LinearGradientBrush>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="BorderBrush" TargetName="Bd" Value="#FF143c65"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </MultiTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="lvStyle1" TargetType="ListView">
+                <Setter Property="SnapsToDevicePixels" Value="true"/>
+                <Setter Property="OverridesDefaultStyle" Value="true"/>
+                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListView">
+                            <Border Name="Border" BorderThickness="0" BorderBrush="#999999" Background="Transparent">
+                                <ScrollViewer Style="{DynamicResource {x:Static GridView.GridViewScrollViewerStyleKey}}">
+                                    <ItemsPresenter />
+                                </ScrollViewer>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsGrouping" Value="true">
+                                    <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter TargetName="Border" Property="Background" Value="#BBBBBB"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <LinearGradientBrush x:Key="BackgroundBrush" StartPoint="0,0" EndPoint="0,1">
+                <LinearGradientBrush.GradientStops>
+                    <GradientStopCollection>
+                        <GradientStop Color="#FF6FBDE8" Offset="0"/>
+                        <GradientStop Color="#FF4385BE" Offset="1"/>
+                    </GradientStopCollection>
+                </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="HighlightBackgroundBrush" StartPoint="0,0" EndPoint="0,1">
+                <LinearGradientBrush.GradientStops>
+                    <GradientStopCollection>
+                        <GradientStop Color="#FF97d3f3" Offset="0"/>
+                        <GradientStop Color="#FF4385BE" Offset="1"/>
+                    </GradientStopCollection>
+                </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="BorderBrush" StartPoint="0,0" EndPoint="0,1">
+                <LinearGradientBrush.GradientStops>
+                    <GradientStopCollection>
+                        <GradientStop Color="#FFAFDDF6" Offset="0"/>
+                        <GradientStop Color="#FF2969AA" Offset="1"/>
+                    </GradientStopCollection>
+                </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="PressedBorderBrush" StartPoint="0,0" EndPoint="0,1">
+                <LinearGradientBrush.GradientStops>
+                    <GradientStopCollection>
+                        <GradientStop Color="#FF75aac7" Offset="0"/>
+                        <GradientStop Color="#FF143c65" Offset="1"/>
+                    </GradientStopCollection>
+                </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+
+            <Style x:Key="GridViewColumnHeaderGripper" TargetType="Thumb">
+                <Setter Property="Width" Value="18"/>
+                <Setter Property="Background" Value="#2e566b"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Thumb}">
+                            <Border Padding="{TemplateBinding Padding}" Background="Transparent">
+                                <Rectangle HorizontalAlignment="Center" Width="1" Fill="{TemplateBinding Background}"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="GridViewColumnStyle1" TargetType="GridViewColumnHeader">
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="#FFFFFF" />
+                <Setter Property="Padding" Value="3"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="GridViewColumnHeader">
+                            <Grid>
+                                <Border Name="HeaderBorder" Padding="{TemplateBinding Padding}" BorderThickness="0,1,0,1" BorderBrush="{StaticResource BorderBrush}" Background="{StaticResource BackgroundBrush}" >
+                                    <ContentPresenter Name="HeaderContent" Margin="0,0,0,1" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                </Border>
+                                <Thumb x:Name="PART_HeaderGripper" HorizontalAlignment="Right" Margin="0,0,-9,0" Style="{StaticResource GridViewColumnHeaderGripper}"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter TargetName="HeaderBorder" Property="Background" Value="{StaticResource HighlightBackgroundBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="true">
+                                    <Setter TargetName="HeaderBorder" Property="Background" Value="{StaticResource PressedBorderBrush}"/>
+                                    <Setter TargetName="HeaderContent" Property="Margin" Value="1,1,0,0"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="Role" Value="Floating">
+                        <Setter Property="Opacity" Value="0.7"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="GridViewColumnHeader">
+                                    <Canvas Name="PART_FloatingHeaderCanvas">
+                                        <Rectangle Fill="#60000000" Width="{TemplateBinding ActualWidth}" Height="{TemplateBinding ActualHeight}"/>
+                                    </Canvas>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+                    <Trigger Property="Role" Value="Padding">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="GridViewColumnHeader">
+                                    <Border Name="HeaderBorder" BorderThickness="0,1,0,1" BorderBrush="{StaticResource BorderBrush}" Background="{StaticResource BackgroundBrush}"/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+
+            <!--LIST VIEW END-->
+            <Style x:Key="MyFocusVisual">
+        		<Setter Property="Control.Template">
+        			<Setter.Value>
+        				<ControlTemplate TargetType="{x:Type Control}">
+        					<Grid Margin="3 2">
+        						<Rectangle x:Name="r1" StrokeThickness="1" Stroke="Black" StrokeDashArray="2 2"/>
+        						<Border x:Name="border" Width="{TemplateBinding ActualWidth}" Height="{TemplateBinding ActualHeight}"  CornerRadius="2" BorderThickness="1" />
+        					</Grid>
+        				</ControlTemplate>
+        			</Setter.Value>
+        		</Setter>
+        	</Style>
+        	<Style x:Key="ShadowStyle">
+        		<Setter Property="Control.Foreground" Value="LightGray" />
+        	</Style>
+        	<Style x:Key="InformButton" TargetType="{x:Type Button}">
+        		<Setter Property="OverridesDefaultStyle" Value="True"/>
+        		<Setter Property="Margin" Value="2"/>
+        		<Setter Property="FontFamily" Value="Helvetica LT Std Cond Blk"/>
+        		<Setter Property="TextOptions.TextFormattingMode" Value="Display"/> 
+        		<Setter Property="FontSize" Value="16px"/>
+        		<Setter Property="FocusVisualStyle" Value="{StaticResource MyFocusVisual}" />
+        		<Setter Property="Background" Value="{DynamicResource GlassFill}" />
+                
+
+        		<Setter Property="Template">
+        			<Setter.Value>
+        				<ControlTemplate TargetType="{x:Type Button}">
+        					<Border x:Name="border" 
+        						BorderThickness="1"
+        						Padding="4,2" 
+        						BorderBrush="DarkGray" 
+        						CornerRadius="3" 
+        						Background="{TemplateBinding Background}">
+        						<Grid >
+        							<ContentPresenter HorizontalAlignment="Center" 
+        								VerticalAlignment="Center" x:Name="contentShadow" 
+        								Style="{StaticResource ShadowStyle}">
+        								<ContentPresenter.RenderTransform>
+        									<TranslateTransform X="0" Y="0" />
+        								</ContentPresenter.RenderTransform>
+        							</ContentPresenter>
+        							<ContentPresenter HorizontalAlignment="Center" 
+        								VerticalAlignment="Center" x:Name="content"/>
+        						</Grid>
+        					</Border>
+        					<ControlTemplate.Triggers>
+        						<Trigger Property="IsMouseOver" Value="True">
+        							<Setter TargetName="border" Property="BorderBrush" Value="#FF4788c8" />
+        							<Setter Property="Foreground" Value="#FF4788c8" />
+        							<Setter Property="Background" Value="#FF304738" />
+        						</Trigger>
+        						<Trigger Property="IsPressed" Value="True">					
+        							<Setter TargetName="content" Property="RenderTransform" >
+        								<Setter.Value>
+        									<TranslateTransform Y="1.0" />
+        								</Setter.Value>
+        							</Setter>
+        						</Trigger>
+        						<Trigger Property="IsDefaulted" Value="True">
+        							<Setter TargetName="border" Property="BorderBrush" Value="#FF282828" />
+        						</Trigger>
+        						<Trigger Property="IsFocused" Value="True">
+        							<Setter TargetName="border" Property="BorderBrush" Value="#FF282828" />
+        						</Trigger>
+        						<Trigger Property="IsEnabled" Value="False">
+        							<Setter TargetName="border" Property="Opacity" Value="0.7" />
+        							<Setter Property="Foreground" Value="Gray" />
+        						</Trigger>
+
+        					</ControlTemplate.Triggers>
+        				</ControlTemplate>
+        			</Setter.Value>
+        		</Setter>
+        	</Style>
+        	<Style x:Key="TabItem_Theme" TargetType="{x:Type TabItem}">
+        		<Setter Property="Foreground" Value="White"/>
+        		<Setter Property="Padding" Value="6,1,6,1"/>
+        		<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        		<Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        		<Setter Property="Template">
+        			<Setter.Value>
+        				<ControlTemplate TargetType="{x:Type TabItem}">
+        					<Grid SnapsToDevicePixels="true">
+        						<Border x:Name="Bd" BorderThickness="1,1,1,0" CornerRadius="0,10,0,0" Margin="0,0,-5,0" Padding="10,2">
+        							<Border.BorderBrush>
+        								<LinearGradientBrush EndPoint="0.92,0.518" StartPoint="0.045,0.518">
+        									<GradientStop Color="#FF747474" Offset="0"/>
+        									<GradientStop Color="White" Offset="0.533"/>
+        									<GradientStop Color="#FFB3B3B3" Offset="1"/>
+        								</LinearGradientBrush>
+        							</Border.BorderBrush>
+        							<Border.Background>
+        								<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+        									<GradientStop Color="#FF939393" Offset="0"/>
+        									<GradientStop Color="#FF5E5E5E" Offset="0.276"/>
+        									<GradientStop Color="#FF2A2A2A" Offset="0.28"/>
+        									<GradientStop Color="#FF2A2A2A" Offset="1"/>
+        								</LinearGradientBrush>
+        							</Border.Background>
+        							<ContentPresenter x:Name="Content" HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" ContentSource="Header" RecognizesAccessKey="True"/>
+        						</Border>
+        					</Grid>
+        					<ControlTemplate.Triggers>
+        						<Trigger Property="IsMouseOver" Value="true">
+        							<Setter Property="BorderBrush" TargetName="Bd" Value="White"/>
+        							<Setter Property="Background" TargetName="Bd">
+        								<Setter.Value>
+        									<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+        										<GradientStop Color="Gray" Offset="0"/>
+        										<GradientStop Color="#FF848484" Offset="0.111"/>
+        										<GradientStop Color="#FFC5C5C5" Offset="1"/>
+        									</LinearGradientBrush>
+        								</Setter.Value>
+        							</Setter>
+        						</Trigger>
+        						<Trigger Property="IsSelected" Value="true">
+        							<Setter Property="Panel.ZIndex" Value="1"/>
+        							<Setter Property="Background" TargetName="Bd">
+        								<Setter.Value>
+        									<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+        										<GradientStop Color="#FFCECECE" Offset="0"/>
+        										<GradientStop Color="White" Offset="1"/>
+        									</LinearGradientBrush>
+        								</Setter.Value>
+        							</Setter>
+        						</Trigger>
+        						<Trigger Property="TabStripPlacement" Value="Bottom">
+        							<Setter Property="BorderThickness" TargetName="Bd" Value="1,0,1,1"/>
+        						</Trigger>
+        						<Trigger Property="TabStripPlacement" Value="Left">
+        							<Setter Property="BorderThickness" TargetName="Bd" Value="1,1,0,1"/>
+        						</Trigger>
+        						<Trigger Property="TabStripPlacement" Value="Right">
+        							<Setter Property="BorderThickness" TargetName="Bd" Value="0,1,1,1"/>
+        						</Trigger>
+        						<MultiTrigger>
+        							<MultiTrigger.Conditions>
+        								<Condition Property="IsSelected" Value="true"/>
+        								<Condition Property="TabStripPlacement" Value="Top"/>
+        							</MultiTrigger.Conditions>
+        							<Setter Property="Margin" Value="-2,-2,-2,-1"/>
+        							<Setter Property="Margin" TargetName="Content" Value="0,0,0,1"/>
+        						</MultiTrigger>
+        						<MultiTrigger>
+        							<MultiTrigger.Conditions>
+        								<Condition Property="IsSelected" Value="true"/>
+        								<Condition Property="TabStripPlacement" Value="Bottom"/>
+        							</MultiTrigger.Conditions>
+        							<Setter Property="Margin" Value="-2,-1,-2,-2"/>
+        							<Setter Property="Margin" TargetName="Content" Value="0,1,0,0"/>
+        						</MultiTrigger>
+        						<MultiTrigger>
+        							<MultiTrigger.Conditions>
+        								<Condition Property="IsSelected" Value="true"/>
+        								<Condition Property="TabStripPlacement" Value="Left"/>
+        							</MultiTrigger.Conditions>
+        							<Setter Property="Margin" Value="-2,-2,-1,-2"/>
+        							<Setter Property="Margin" TargetName="Content" Value="0,0,1,0"/>
+        						</MultiTrigger>
+        						<MultiTrigger>
+        							<MultiTrigger.Conditions>
+        								<Condition Property="IsSelected" Value="true"/>
+        								<Condition Property="TabStripPlacement" Value="Right"/>
+        							</MultiTrigger.Conditions>
+        							<Setter Property="Margin" Value="-1,-2,-2,-2"/>
+        							<Setter Property="Margin" TargetName="Content" Value="1,0,0,0"/>
+        						</MultiTrigger>
+        						<Trigger Property="IsEnabled" Value="false">
+        							<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+        						</Trigger>
+        					</ControlTemplate.Triggers>
+        				</ControlTemplate>
+        			</Setter.Value>
+        		</Setter>
+        		<Style.Triggers>
+        			<Trigger Property="Selector.IsSelected" Value="False">
+        				<Setter Property="Foreground" Value="White"/>
+        			</Trigger>
+        			<Trigger Property="Selector.IsSelected" Value="True">
+        				<Setter Property="Foreground" Value="Black"/>
+        			</Trigger>
+        		</Style.Triggers>
+        	</Style>
+        	<Style x:Key="TabControl_Theme" TargetType="{x:Type TabControl}">
+        		<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        		<Setter Property="Padding" Value="4,4,4,4"/>
+        		<Setter Property="BorderThickness" Value="1"/>
+        		<Setter Property="Background" Value="#FFFFFF"/>
+        		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+        		<Setter Property="VerticalContentAlignment" Value="Center"/>
+        		<Setter Property="Template">
+        			<Setter.Value>
+        				<ControlTemplate TargetType="{x:Type TabControl}">
+        					<Grid ClipToBounds="true" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local">
+        						<Grid.ColumnDefinitions>
+        							<ColumnDefinition x:Name="ColumnDefinition0"/>
+        							<ColumnDefinition x:Name="ColumnDefinition1" Width="0"/>
+        						</Grid.ColumnDefinitions>
+        						<Grid.RowDefinitions>
+        							<RowDefinition x:Name="RowDefinition0" Height="Auto"/>
+        							<RowDefinition x:Name="RowDefinition1" Height="*"/>
+        						</Grid.RowDefinitions>
+        						<TabPanel x:Name="HeaderPanel" Margin="2,2,2,0" IsItemsHost="true" Panel.ZIndex="1" Grid.Column="0" Grid.Row="0" KeyboardNavigation.TabIndex="1"/>
+        						<Border x:Name="ContentPanel" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Grid.Column="0" Grid.Row="1" KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local">
+        							<Grid>
+        								<Rectangle Stroke="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Width="Auto" Height="40" Opacity="0.35">
+        									<Rectangle.RenderTransform>
+        										<TransformGroup>
+        											<ScaleTransform ScaleX="-1" ScaleY="-1"/>
+        											<SkewTransform AngleX="0" AngleY="0"/>
+        											<RotateTransform Angle="0"/>
+        											<TranslateTransform/>
+        										</TransformGroup>
+        									</Rectangle.RenderTransform>
+        								</Rectangle>
+        								<ContentPresenter x:Name="PART_SelectedContentHost" Margin="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" ContentSource="SelectedContent"/>
+        							</Grid>
+        						</Border>
+        					</Grid>
+        					<ControlTemplate.Triggers>
+        						<Trigger Property="TabStripPlacement" Value="Bottom">
+        							<Setter Property="Grid.Row" TargetName="HeaderPanel" Value="1"/>
+        							<Setter Property="Grid.Row" TargetName="ContentPanel" Value="0"/>
+        							<Setter Property="Height" TargetName="RowDefinition0" Value="*"/>
+        							<Setter Property="Height" TargetName="RowDefinition1" Value="Auto"/>
+        							<Setter Property="Margin" TargetName="HeaderPanel" Value="2,0,2,2"/>
+        						</Trigger>
+        						<Trigger Property="TabStripPlacement" Value="Left">
+        							<Setter Property="Grid.Row" TargetName="HeaderPanel" Value="0"/>
+        							<Setter Property="Grid.Row" TargetName="ContentPanel" Value="0"/>
+        							<Setter Property="Grid.Column" TargetName="HeaderPanel" Value="0"/>
+        							<Setter Property="Grid.Column" TargetName="ContentPanel" Value="1"/>
+        							<Setter Property="Width" TargetName="ColumnDefinition0" Value="Auto"/>
+        							<Setter Property="Width" TargetName="ColumnDefinition1" Value="*"/>
+        							<Setter Property="Height" TargetName="RowDefinition0" Value="*"/>
+        							<Setter Property="Height" TargetName="RowDefinition1" Value="0"/>
+        							<Setter Property="Margin" TargetName="HeaderPanel" Value="2,2,0,2"/>
+        						</Trigger>
+        						<Trigger Property="TabStripPlacement" Value="Right">
+        							<Setter Property="Grid.Row" TargetName="HeaderPanel" Value="0"/>
+        							<Setter Property="Grid.Row" TargetName="ContentPanel" Value="0"/>
+        							<Setter Property="Grid.Column" TargetName="HeaderPanel" Value="1"/>
+        							<Setter Property="Grid.Column" TargetName="ContentPanel" Value="0"/>
+        							<Setter Property="Width" TargetName="ColumnDefinition0" Value="*"/>
+        							<Setter Property="Width" TargetName="ColumnDefinition1" Value="Auto"/>
+        							<Setter Property="Height" TargetName="RowDefinition0" Value="*"/>
+        							<Setter Property="Height" TargetName="RowDefinition1" Value="0"/>
+        							<Setter Property="Margin" TargetName="HeaderPanel" Value="0,2,2,2"/>
+        						</Trigger>
+        						<Trigger Property="IsEnabled" Value="false">
+        							<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+        						</Trigger>
+        					</ControlTemplate.Triggers>
+        				</ControlTemplate>
+        			</Setter.Value>
+        		</Setter>
+        	</Style>
+        	<Style BasedOn="{x:Null}" TargetType="{x:Type Button}" x:Key="Button_Theme">
+        		<Setter Property="Template">
+        			<Setter.Value>
+        				<ControlTemplate TargetType="{x:Type Button}">
+        					<ControlTemplate.Resources>
+        						<Storyboard x:Key="over">
+        							<ThicknessAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="title" Storyboard.TargetProperty="(FrameworkElement.Margin)">
+        								<SplineThicknessKeyFrame KeyTime="00:00:00" Value="0"/>
+        								<SplineThicknessKeyFrame KeySpline="0.5,0,0.5,1" KeyTime="00:00:00.5000000" Value="0,-60,0,0"/>
+        								<SplineThicknessKeyFrame KeyTime="00:00:00.7000000" Value="0,-55,0,0"/>
+        							</ThicknessAnimationUsingKeyFrames>
+        							<ThicknessAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="titleOver" Storyboard.TargetProperty="(FrameworkElement.Margin)">
+        								<SplineThicknessKeyFrame KeyTime="00:00:00" Value="0,0,0,-55"/>
+        								<SplineThicknessKeyFrame KeyTime="00:00:00.5000000" Value="0,0,0,5" KeySpline="0.5,0,0.5,1"/>
+        								<SplineThicknessKeyFrame KeyTime="00:00:00.7000000" Value="0"/>
+        							</ThicknessAnimationUsingKeyFrames>
+        						</Storyboard>
+        						<Storyboard x:Key="overBack">
+        							<ThicknessAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="title" Storyboard.TargetProperty="(FrameworkElement.Margin)">
+        								<SplineThicknessKeyFrame KeyTime="00:00:00" Value="0,-55,0,0"/>
+        								<SplineThicknessKeyFrame KeySpline="0.5,0,0.5,1" KeyTime="00:00:00.5000000" Value="0,5,0,0"/>
+        								<SplineThicknessKeyFrame KeyTime="00:00:00.7000000" Value="0"/>
+        							</ThicknessAnimationUsingKeyFrames>
+        							<ThicknessAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="titleOver" Storyboard.TargetProperty="(FrameworkElement.Margin)">
+        								<SplineThicknessKeyFrame KeyTime="00:00:00" Value="0"/>
+        								<SplineThicknessKeyFrame KeySpline="0.5,0,0.5,1" KeyTime="00:00:00.5000000" Value="0,0,0,-60"/>
+        								<SplineThicknessKeyFrame KeyTime="00:00:00.7000000" Value="0,0,0,-55"/>
+        							</ThicknessAnimationUsingKeyFrames>
+        						</Storyboard>
+        						<Storyboard x:Key="press">
+        							<ObjectAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="bgPress" Storyboard.TargetProperty="(UIElement.Visibility)">
+        								<DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Visible}"/>
+        								<DiscreteObjectKeyFrame KeyTime="00:00:00.7000000" Value="{x:Static Visibility.Visible}"/>
+        							</ObjectAnimationUsingKeyFrames>
+        							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="bgPress" Storyboard.TargetProperty="(UIElement.Opacity)">
+        								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+        								<SplineDoubleKeyFrame KeyTime="00:00:00.4000000" Value="1"/>
+        								<SplineDoubleKeyFrame KeyTime="00:00:00.7000000" Value="0"/>
+        							</DoubleAnimationUsingKeyFrames>
+        						</Storyboard>
+        						<Storyboard x:Key="overline">
+        							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="bg" Storyboard.TargetProperty="(Shape.Stroke).(Brush.RelativeTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+        								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="-1.061"/>
+        								<SplineDoubleKeyFrame KeyTime="00:00:01.1000000" Value="1.024"/>
+        								<SplineDoubleKeyFrame KeyTime="00:00:02.5000000" Value="1.024"/>
+        							</DoubleAnimationUsingKeyFrames>
+        							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="bg" Storyboard.TargetProperty="(Shape.Stroke).(Brush.RelativeTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+        								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+        								<SplineDoubleKeyFrame KeyTime="00:00:01.1000000" Value="0.001"/>
+        								<SplineDoubleKeyFrame KeyTime="00:00:02.5000000" Value="0.001"/>
+        							</DoubleAnimationUsingKeyFrames>
+        						</Storyboard>
+        					</ControlTemplate.Resources>
+        					<Grid x:Name="grid" ClipToBounds="True">
+        						<Rectangle RadiusX="2" RadiusY="2" x:Name="bg" Fill="{TemplateBinding Background}">
+        							<Rectangle.Stroke>
+        								<LinearGradientBrush EndPoint="1.04,0.5" StartPoint="-0.01,0.5">
+        									<LinearGradientBrush.RelativeTransform>
+        										<TransformGroup>
+        											<ScaleTransform CenterX="0.5" CenterY="0.5"/>
+        											<SkewTransform CenterX="0.5" CenterY="0.5"/>
+        											<RotateTransform CenterX="0.5" CenterY="0.5"/>
+        											<TranslateTransform/>
+        										</TransformGroup>
+        									</LinearGradientBrush.RelativeTransform>
+        									<GradientStop Color="#FF595959" Offset="0"/>
+        									<GradientStop Color="White" Offset="0.7"/>
+        									<GradientStop Color="#FF303030" Offset="1"/>
+        								</LinearGradientBrush>
+        							</Rectangle.Stroke>
+        						</Rectangle>
+        						<Rectangle Stroke="{x:Null}" RadiusX="2" RadiusY="2" x:Name="bgBling" Margin="2,2,2,20">
+        							<Rectangle.Fill>
+        								<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+        									<GradientStop Color="#00FFFFFF" Offset="1"/>
+        									<GradientStop Color="#B2FFFFFF" Offset="0"/>
+        								</LinearGradientBrush>
+        							</Rectangle.Fill>
+        						</Rectangle>
+        						<TextBlock x:Name="title" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="{TemplateBinding Content}"/>
+        						<Rectangle RadiusX="8" RadiusY="8" x:Name="bgPress" StrokeThickness="2" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" Fill="{x:Null}" d:CopyToken="803fb051-7927-4812-be8c-c89ef9381dd4">
+        							<Rectangle.RenderTransform>
+        								<TransformGroup>
+        									<ScaleTransform/>
+        									<SkewTransform/>
+        									<RotateTransform/>
+        									<TranslateTransform/>
+        								</TransformGroup>
+        							</Rectangle.RenderTransform>
+        							<Rectangle.Stroke>
+        								<LinearGradientBrush EndPoint="0.967,1.042" StartPoint="0.076,-0.042">
+        									<LinearGradientBrush.RelativeTransform>
+        										<TransformGroup>
+        											<ScaleTransform CenterX="0.5" CenterY="0.5"/>
+        											<SkewTransform CenterX="0.5" CenterY="0.5"/>
+        											<RotateTransform CenterX="0.5" CenterY="0.5"/>
+        											<TranslateTransform X="-0.458"/>
+        										</TransformGroup>
+        									</LinearGradientBrush.RelativeTransform>
+        									<GradientStop Offset="1" Color="White"/>
+        									<GradientStop Color="White"/>
+        								</LinearGradientBrush>
+        							</Rectangle.Stroke>
+        						</Rectangle>
+        						<TextBlock x:Name="titleOver" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="{TemplateBinding Content}" Margin="0,0,0,-60" FontWeight="Bold" FontSize="14.667" FontFamily="Arial"/>
+        					</Grid>
+        					<ControlTemplate.Triggers>
+        						<Trigger Property="IsMouseOver" Value="True">
+        							<Trigger.ExitActions>
+        								<BeginStoryboard x:Name="overBack_BeginStoryboard" Storyboard="{StaticResource overBack}"/>
+        								<StopStoryboard BeginStoryboardName="overline_BeginStoryboard"/>
+        							</Trigger.ExitActions>
+        							<Trigger.EnterActions>
+        								<BeginStoryboard Storyboard="{StaticResource over}"/>
+        								<BeginStoryboard x:Name="overline_BeginStoryboard" Storyboard="{StaticResource overline}"/>
+        							</Trigger.EnterActions>
+        						</Trigger>
+        						<Trigger Property="IsPressed" Value="True">
+        							<Trigger.EnterActions>
+        								<BeginStoryboard x:Name="press_BeginStoryboard" Storyboard="{StaticResource press}"/>
+        							</Trigger.EnterActions>
+        							<Setter Property="Stroke" TargetName="bgPress">
+        								<Setter.Value>
+        									<LinearGradientBrush EndPoint="0.967,1.042" StartPoint="0.076,-0.042">
+        										<LinearGradientBrush.RelativeTransform>
+        											<TransformGroup>
+        												<ScaleTransform CenterX="0.5" CenterY="0.5"/>
+        												<SkewTransform CenterX="0.5" CenterY="0.5"/>
+        												<RotateTransform CenterX="0.5" CenterY="0.5"/>
+        												<TranslateTransform X="-0.458"/>
+        											</TransformGroup>
+        										</LinearGradientBrush.RelativeTransform>
+        										<GradientStop Offset="0"/>
+        										<GradientStop Offset="1"/>
+        									</LinearGradientBrush>
+        								</Setter.Value>
+        							</Setter>
+        						</Trigger>
+        						<Trigger Property="IsEnabled" Value="False"/>
+        					</ControlTemplate.Triggers>
+        				</ControlTemplate>
+        			</Setter.Value>
+        		</Setter>
+        		<Setter Property="Background">
+        			<Setter.Value>
+        				<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" MappingMode="RelativeToBoundingBox">
+        					<GradientStop Color="#FFF0F0F0" Offset="0.149"/>
+        					<GradientStop Color="#FF9F9F9F" Offset="1"/>
+        					<GradientStop Color="#FFA8A8A8" Offset="0"/>
+        					<GradientStop Color="White" Offset="0.335"/>
+        				</LinearGradientBrush>
+        			</Setter.Value>
+        		</Setter>
+        	</Style>
+            
+
+            <Storyboard x:Key="exitButtonAni">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="imgClose" RepeatBehavior="Forever">
+                    <EasingDoubleKeyFrame KeyTime="0:0:6" Value="360"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+            <Storyboard x:Key="minButtonAni">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="imgMinimize" RepeatBehavior="Forever">
+                    <EasingDoubleKeyFrame KeyTime="0:0:6" Value="-360"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+            <Storyboard x:Key="BusyLightAni" RepeatBehavior="Forever">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="bbb">
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.6" Value="0"/>
+                	<EasingDoubleKeyFrame KeyTime="0:0:2.1" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[2].(GradientStop.Offset)" Storyboard.TargetName="aaa">
+                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0.534"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:2.1" Value="0.181"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:7" Value="0.181"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:9" Value="0.55"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:11.3" Value="0.112"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[3].(GradientStop.Offset)" Storyboard.TargetName="aaa">
+                	<EasingDoubleKeyFrame KeyTime="0:0:1" Value="0.7"/>
+                	<EasingDoubleKeyFrame KeyTime="0:0:2.1" Value="0.7"/>
+                	<EasingDoubleKeyFrame KeyTime="0:0:7" Value="0.7"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="viewbox">
+                	<EasingDoubleKeyFrame KeyTime="0:0:4" Value="0.042"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="grid">
+                	<EasingDoubleKeyFrame KeyTime="0:0:4" Value="0"/>
+                	<EasingDoubleKeyFrame KeyTime="0:0:6.9" Value="360"/>
+                </DoubleAnimationUsingKeyFrames>
+                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[2].(GradientStop.Color)" Storyboard.TargetName="aaa">
+                	<EasingColorKeyFrame KeyTime="0:0:7" Value="Red"/>
+                	<EasingColorKeyFrame KeyTime="0:0:9" Value="#FF68FF00"/>
+                	<EasingColorKeyFrame KeyTime="0:0:11.3" Value="Red"/>
+                </ColorAnimationUsingKeyFrames>
+            </Storyboard>
+
+            <LinearGradientBrush x:Key="GreenChrome" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FF9FA29D" Offset="1"/>
+                <GradientStop Color="White"/>
+                <GradientStop Color="#FFFBFFF8" Offset="0.836"/>
+                <GradientStop Color="#FEC1C7BD" Offset="0.573"/>
+                <GradientStop Color="#FF3F443C" Offset="0.922"/>
+                <GradientStop Color="#FE4A5147" Offset="0.082"/>
+                <GradientStop Color="#FEE3EDDE" Offset="0.138"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="GreenBorderLarge" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FF4F9E00" Offset="1"/>
+                <GradientStop Color="#FFC0FFA3"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="GreenBorder" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FFD6DC95" Offset="1"/>
+                <GradientStop Color="#FFDCF550"/>
+                <GradientStop Color="#FF7B8154" Offset="0.315"/>
+                <GradientStop Color="#FF62701B" Offset="0.591"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="GlassFill" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#3FB2B2B2" Offset="0"/>
+                <GradientStop Color="#19FFFFFF" Offset="1"/>
+                <GradientStop Color="#33999999" Offset="0.091"/>
+                <GradientStop Color="#4C2D2D2D" Offset="0.178"/>
+                <GradientStop Color="#33E2E2E2" Offset="0.865"/>
+                <GradientStop Color="#FFCBCBCB" Offset="0.974"/>
+                <GradientStop Color="#4C7A7A7A" Offset="0.483"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="GlassBorder" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#7F000000" Offset="0"/>
+                <GradientStop Color="#7F121111" Offset="1"/>
+                <GradientStop Color="#FF1D1C1C" Offset="0.165"/>
+                <GradientStop Color="#FFD2D2D2" Offset="0.826"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="Chrome" EndPoint="0.996,0.5" StartPoint="0.036,0.5">
+                <GradientStop Color="#FF727272" Offset="0"/>
+                <GradientStop Color="White" Offset="0.495"/>
+                <GradientStop Color="#FF727272" Offset="1"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="BoderGreen" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FF4F9E00" Offset="1"/>
+                <GradientStop Color="#FFC0FFA3"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="ChromeGRay" EndPoint="0.5,1"
+            	StartPoint="0.5,0">
+            	<GradientStop Color="sc#0.5, 0.8372822, 0.8372822, 0.8372822"
+            		Offset="0" />
+            	<GradientStop Color="sc#1, 1, 1, 1"
+            		Offset="1" />
+            	<GradientStop Color="sc#1, 0.469537228, 0.469537228, 0.469537228"
+            		Offset="0.22629613975767773" />
+            	<GradientStop Color="#FFFFFFFF"
+            		Offset="0" />
+            	<GradientStop Color="#FFFFFFFF"
+            		Offset="1" />
+            </LinearGradientBrush>
+        	<RadialGradientBrush x:Key="Gold" GradientOrigin="0.498,0.145">
+        		<GradientStop Color="#FFC39600" Offset="1"/>
+        		<GradientStop Color="#FFFEFF08"/>
+        	</RadialGradientBrush>
+        	<Style x:Key="CoolCheckbox2"  TargetType="{x:Type CheckBox}">
+        		<Setter Property="Effect">
+        			<Setter.Value>
+        				<DropShadowEffect Color="Black"
+        					Opacity="0.3"/>
+        			</Setter.Value>
+        		</Setter>
+        		<Setter Property="Height"
+        			Value="35"/>
+        		<Setter Property="FontSize"
+        			Value="13"/>
+        		<Setter Property="FontFamily"
+        			Value="Calibri"/>
+        		<Setter Property="Cursor"
+        			Value="Hand"/>
+        		<Setter Property="Foreground"
+        			Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+        		<Setter Property="Background"
+        			Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+        		<Setter Property="Template">
+        			<Setter.Value>
+        				<ControlTemplate TargetType="{x:Type CheckBox}">
+        					<ControlTemplate.Resources>
+        						<Storyboard x:Key="OnChecking">
+        							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+        								Storyboard.TargetName="slider"
+        								Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+        								<SplineDoubleKeyFrame KeyTime="0:0:0.6"
+        									Value="32.231" />
+        							</DoubleAnimationUsingKeyFrames>
+        							<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="slider">
+        								<EasingDoubleKeyFrame KeyTime="0" Value="0.927"/>
+        								<EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0.824"/>
+        							</DoubleAnimationUsingKeyFrames>
+        							<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="slider">
+        								<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+        								<EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0"/>
+        							</DoubleAnimationUsingKeyFrames>
+        						</Storyboard>
+        						<Storyboard x:Key="OnUnchecking">
+        							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+        								Storyboard.TargetName="slider"
+        								Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+        								<SplineDoubleKeyFrame KeyTime="0:0:0.6" Value="0"/>
+        							</DoubleAnimationUsingKeyFrames>
+        							<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="slider">
+        								<SplineDoubleKeyFrame KeyTime="0" Value="0.824"/>
+        								<SplineDoubleKeyFrame KeyTime="0:0:0.6" Value="0.927"/>
+        							</DoubleAnimationUsingKeyFrames>
+        							<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="slider">
+        								<SplineDoubleKeyFrame KeyTime="0" Value="0"/>
+        								<SplineDoubleKeyFrame KeyTime="0:0:0.6" Value="1"/>
+        							</DoubleAnimationUsingKeyFrames>
+        						</Storyboard>
+        					</ControlTemplate.Resources>
+        					<DockPanel x:Name="dockPanel">
+        						<Grid Margin="5,5,0,5"
+        							Width="27.552"
+        							Background="Transparent">
+        							<Image Width="20"
+        								Height="25"
+        								HorizontalAlignment="Left"
+        								Margin="5,0,0,0" Source="Images/CheckMark.png"/>
+        							<Border HorizontalAlignment="Left"
+        								x:Name="slider"
+        								Width="25"
+        								BorderThickness="1,1,1,1"
+        								CornerRadius="5"
+        								BorderBrush="{x:Null}"
+        								RenderTransformOrigin="0.5,0.5"
+        								Margin="1,1,1,1" Background="{DynamicResource Chrome}">
+        								<Border.RenderTransform>
+        									<TransformGroup>
+        										<ScaleTransform ScaleX="1"
+        											ScaleY="1" />
+        										<SkewTransform AngleX="0"
+        											AngleY="0" />
+        										<RotateTransform Angle="0" />
+        										<TranslateTransform X="0"
+        											Y="0" />
+        									</TransformGroup>
+        								</Border.RenderTransform>
+        							</Border>
+        						</Grid>
+        						<ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+        							Content="{TemplateBinding Content}"
+        							ContentStringFormat="{TemplateBinding ContentStringFormat}"
+        							ContentTemplate="{TemplateBinding ContentTemplate}"
+        							RecognizesAccessKey="True"
+        							VerticalAlignment="Center" />
+        					</DockPanel>
+        					<ControlTemplate.Triggers>
+        						<Trigger Property="IsChecked"
+        							Value="True">
+        							<Trigger.ExitActions>
+        								<BeginStoryboard x:Name="OnUnchecking_BeginStoryboard" Storyboard="{StaticResource OnUnchecking}"/>
+        							</Trigger.ExitActions>
+        							<Trigger.EnterActions>
+        								<BeginStoryboard Storyboard="{StaticResource OnChecking}"
+        									x:Name="OnChecking_BeginStoryboard" />
+        							</Trigger.EnterActions>
+        						</Trigger>
+        						<Trigger Property="IsEnabled"
+        							Value="False">
+        							<Setter Property="Foreground"
+        								Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+        						</Trigger>
+        					</ControlTemplate.Triggers>
+        				</ControlTemplate>
+        			</Setter.Value>
+        		</Setter>
+        	</Style>
+            <LinearGradientBrush x:Key="iTuneGReen" EndPoint="0.5,1" StartPoint="0.5,0">
+            	<GradientStop Color="#FFCBCBC7" Offset="0"/>
+            	<GradientStop Color="#FFEAF0CD" Offset="1"/>
+            	<GradientStop Color="#FFDCDECB" Offset="0.685"/>
+            	<GradientStop Color="#FFD1D3C8" Offset="0.409"/>
+        	</LinearGradientBrush>
+            
+			<Style x:Key="CoolCheckbox"  TargetType="{x:Type CheckBox}">
+            	<Setter Property="Effect">
+            		<Setter.Value>
+            			<DropShadowEffect Color="Black"
+            				Opacity="0.3"/>
+            		</Setter.Value>
+            	</Setter>
+				<Setter Property="Height"
+            		Value="35"/>
+            	<Setter Property="FontSize"
+            		Value="13"/>
+            	<Setter Property="FontFamily"
+            		Value="Calibri"/>
+            	<Setter Property="Cursor"
+            		Value="Hand"/>
+            	<Setter Property="Foreground"
+            		Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+            	<Setter Property="Background"
+            		Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+            	<Setter Property="Template">
+            		<Setter.Value>
+            			<ControlTemplate TargetType="{x:Type CheckBox}">
+            				<ControlTemplate.Resources>
+            					<Storyboard x:Key="OnChecking">
+            						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+            							Storyboard.TargetName="slider"
+            							Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+            							<SplineDoubleKeyFrame KeyTime="0:0:0.6"
+            								Value="32.231" />
+            						</DoubleAnimationUsingKeyFrames>
+            						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="slider">
+            							<EasingDoubleKeyFrame KeyTime="0" Value="0.927"/>
+            							<EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0.824"/>
+            						</DoubleAnimationUsingKeyFrames>
+            					</Storyboard>
+            					<Storyboard x:Key="OnUnchecking">
+            						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+            							Storyboard.TargetName="slider"
+            							Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+            							<SplineDoubleKeyFrame KeyTime="0:0:0.6"
+            								Value="0" />
+            						</DoubleAnimationUsingKeyFrames>
+            						<ThicknessAnimationUsingKeyFrames BeginTime="00:00:00"
+            							Storyboard.TargetName="slider"
+            							Storyboard.TargetProperty="(FrameworkElement.Margin)">
+            							<SplineThicknessKeyFrame KeyTime="0:0:0.6"
+            								Value="1,1,1,1" />
+            						</ThicknessAnimationUsingKeyFrames>
+            						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="slider">
+            							<EasingDoubleKeyFrame KeyTime="0" Value="0.824"/>
+            							<EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0.824"/>
+            						</DoubleAnimationUsingKeyFrames>
+            					</Storyboard>
+            				</ControlTemplate.Resources>
+            				<DockPanel x:Name="dockPanel">
+            					<ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+            						Content="{TemplateBinding Content}"
+            						ContentStringFormat="{TemplateBinding ContentStringFormat}"
+            						ContentTemplate="{TemplateBinding ContentTemplate}"
+            						RecognizesAccessKey="True"
+            						VerticalAlignment="Center" />
+            					<Grid Margin="5,5,0,5"
+            						Width="58.615"
+            						Background="Transparent">
+            						<Image Width="15"
+            							Height="15"
+            							HorizontalAlignment="Right"
+            							Source="/Images/cancel_01.gif"/>
+            						<Image Width="20"
+            							Height="25"
+            							HorizontalAlignment="Left"
+										Margin="5,0,0,0" Source="Images/CheckMark.png"/>
+            						<Border HorizontalAlignment="Left"
+            							x:Name="slider"
+            							Width="25"
+            							BorderThickness="1,1,1,1"
+            							CornerRadius="5"
+            							BorderBrush="{x:Null}"
+            							RenderTransformOrigin="0.5,0.5"
+            							Margin="1,1,1,1" Background="{DynamicResource Chrome}">
+            							<Border.RenderTransform>
+            								<TransformGroup>
+            									<ScaleTransform ScaleX="1"
+            										ScaleY="1" />
+            									<SkewTransform AngleX="0"
+            										AngleY="0" />
+            									<RotateTransform Angle="0" />
+            									<TranslateTransform X="0"
+            										Y="0" />
+            								</TransformGroup>
+            							</Border.RenderTransform>
+            						</Border>
+            					</Grid>
+            				</DockPanel>
+            				<ControlTemplate.Triggers>
+            					<Trigger Property="IsChecked"
+            						Value="True">
+            						<Trigger.ExitActions>
+            							<BeginStoryboard Storyboard="{StaticResource OnUnchecking}"
+            								x:Name="OnUnchecking_BeginStoryboard" />
+            						</Trigger.ExitActions>
+            						<Trigger.EnterActions>
+            							<BeginStoryboard Storyboard="{StaticResource OnChecking}"
+            								x:Name="OnChecking_BeginStoryboard" />
+            						</Trigger.EnterActions>
+            					</Trigger>
+            					<Trigger Property="IsEnabled"
+            						Value="False">
+            						<Setter Property="Foreground"
+            							Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+            					</Trigger>
+            				</ControlTemplate.Triggers>
+            			</ControlTemplate>
+            		</Setter.Value>
+            	</Setter>
+            </Style>
+			<LinearGradientBrush x:Key="DarkerBackGround" EndPoint="0.5,1" StartPoint="0.5,0">
+				<GradientStop Color="#7FA2A2A2" Offset="0"/>
+				<GradientStop Color="#7F807E7E" Offset="1"/>
+				<GradientStop Color="#FF1D1C1C" Offset="0.165"/>
+				<GradientStop Color="#FF424242" Offset="0.836"/>
+			</LinearGradientBrush>
+        </ResourceDictionary>
+        
+    </Window.Resources>
+	
+	<Window.DataContext>
+		<Binding Path="Main" Source="{StaticResource Locator}"/>
+	</Window.DataContext>
+
+    <Grid x:Name="LayoutRoot">
+        <i:Interaction.Triggers>
+            <ei:DataTrigger Binding="{Binding PlayBusyAnimation, Mode=OneWay}" Value="True">
+                <ei:ControlStoryboardAction Storyboard="{StaticResource BusyLightAni}"      
+                                                ControlStoryboardOption="Play"/>
+            </ei:DataTrigger>
+
+            <ei:DataTrigger Binding="{Binding PlayBusyAnimation, Mode=OneWay}" Value="False">
+                <ei:ControlStoryboardAction Storyboard="{StaticResource BusyLightAni}"      
+                                                ControlStoryboardOption="Stop"/>
+            </ei:DataTrigger>
+        </i:Interaction.Triggers>
+    	<Border Margin="-2,0,0,0" BorderThickness="2,4" CornerRadius="10">
+    		<Border.Background>
+    			<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+    				<LinearGradientBrush.RelativeTransform>
+    					<TransformGroup>
+    						<ScaleTransform CenterY="0.5" CenterX="0.5"/>
+    						<SkewTransform CenterY="0.5" CenterX="0.5"/>
+    						<RotateTransform Angle="10" CenterY="0.5" CenterX="0.5"/>
+    						<TranslateTransform/>
+    					</TransformGroup>
+    				</LinearGradientBrush.RelativeTransform>
+    				<GradientStop Color="#FF2A2E33" Offset="0"/>
+    				<GradientStop Color="#FF3A3F46" Offset="1"/>
+    				<GradientStop Color="#FFBBBEC1" Offset="0.095"/>
+    				<GradientStop Color="#FF2D3136" Offset="0.353"/>
+    				<GradientStop Color="#FF363B41" Offset="0.603"/>
+    				<GradientStop Color="#FF8F9BAC" Offset="0.884"/>
+    			</LinearGradientBrush>
+    		</Border.Background>
+
+    		<Border x:Name="MainBorder" BorderThickness="2,4" CornerRadius="10" Margin="3,2.333,1.5,1.375" RenderTransformOrigin="0.5,0.5">
+    			<Border.RenderTransform>
+    				<TransformGroup>
+    					<ScaleTransform ScaleY="1" ScaleX="1"/>
+    					<SkewTransform AngleY="0" AngleX="0"/>
+    					<RotateTransform Angle="0"/>
+    					<TranslateTransform/>
+    				</TransformGroup>
+    			</Border.RenderTransform>
+    			<Border.Background>
+                    <ImageBrush Stretch="UniformToFill" ImageSource="Images/pattern-5.png">
+    					<ImageBrush.RelativeTransform>
+    						<TransformGroup>
+    							<ScaleTransform CenterY="0.5" CenterX="0.5"/>
+    							<SkewTransform AngleY="0" AngleX="0" CenterY="0.5" CenterX="0.5"/>
+    							<RotateTransform Angle="0" CenterY="0.5" CenterX="0.5"/>
+    							<TranslateTransform/>
+    						</TransformGroup>
+    					</ImageBrush.RelativeTransform>
+    				</ImageBrush>
+    			</Border.Background>
+    			<i:Interaction.Triggers>
+    				<i:EventTrigger EventName="MouseLeftButtonDown">
+    					<Command:EventToCommand Command="{Binding MoveWindowNow, Mode=OneWay}"/>
+    				</i:EventTrigger>
+    			</i:Interaction.Triggers>
+    		</Border>
+    	</Border>
+    	<Border x:Name="StatusPanel" BorderThickness="4" Height="161.333" Margin="21.356,167.541,0,0" VerticalAlignment="Top" Width="716.611" CornerRadius="10" BorderBrush="{DynamicResource BoderGreen}" Background="{DynamicResource iTuneGReen}" HorizontalAlignment="Left">
+    		<Grid HorizontalAlignment="Left" Height="112.333" Margin="9.5,7,0,0" VerticalAlignment="Top" Width="709.166" DataContext="{Binding Mode=OneWay}">
+    			<StackPanel Margin="0,2,0,77.669" Orientation="Horizontal" HorizontalAlignment="Left" Width="709.166">
+    				<TextBlock x:Name="tbTrackNumber" HorizontalAlignment="Left" Height="27" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="Black" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" TextOptions.TextFormattingMode="Display" FontSize="16" Margin="0,0,5,0" Text="{Binding CurrentTrack}" ToolTip="CURRENT TRACK NUMBER" />
+    				<TextBlock x:Name="tbTrackName" HorizontalAlignment="Left" Height="27" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="Black" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" TextOptions.TextFormattingMode="Display" FontSize="16" Margin="8,0,0,0" Text="{Binding TrackName}" ToolTip="CURRENT TRACK BEING PROCESSED" />
+    			</StackPanel>
+    			<ProgressBar HorizontalAlignment="Left" Height="20" Margin="0,115.338,0,-23.005" VerticalAlignment="Top" Width="685.675" BorderThickness="2" ToolTip="JOB PROGRESS" Value="{Binding CurrentProgress}"/>
+    			<TextBlock x:Name="tbTrackLocation" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="#FF173814" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" TextOptions.TextFormattingMode="Display" FontSize="13.333" Margin="0,39.661,0,0" Text="{Binding TrackLocation}" ToolTip="LOCATION OF CURRENT TRACK"/>
+    		</Grid>
+    	</Border>
+    	<TextBlock x:Name="tbTotalTracks" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="#FFFFF63F" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" TextOptions.TextFormattingMode="Display" FontSize="16" Margin="401.479,135.101,0,0" TextAlignment="Center" Text="{Binding TotalTracks}" Width="100" ToolTip="TOTAL TRACKS IN LIBRARY" Background="{DynamicResource GlassFill}" Height="25.28"/>
+    	<TextBlock x:Name="tbDeadTracks" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="#FFFFF63F" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" TextOptions.TextFormattingMode="Display" FontSize="16" Margin="288.982,135.101,0,0" TextAlignment="Center" Text="{Binding DeadTracksFound}" ToolTip="DEAD TRACKS" Background="{DynamicResource GlassFill}" Width="100" Height="25.28"/>
+    	<TextBlock x:Name="tbElapsedTime" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="#FFFFF63F" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" TextOptions.TextFormattingMode="Display" FontSize="16" Margin="623.307,135.101,0,0" TextAlignment="Center" Text="{Binding ElapsedTime}" ToolTip="ELAPSED TIME FOR ACTIVE SESSION" Width="100" Background="{DynamicResource GlassFill}" Height="25.28"/>
+        <TextBlock x:Name="tbOrphanedTracks" HorizontalAlignment="Left" TextWrapping="Wrap" Foreground="#FFFFF63F" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" TextOptions.TextFormattingMode="Display" FontSize="16" Margin="175.322,135.101,0,0" TextAlignment="Center" Text="{Binding OrphanedTacks}" ToolTip="TRACKS FOUND" Width="100" Background="{DynamicResource GlassFill}" VerticalAlignment="Top" Height="25.28"/>
+    	<TextBlock x:Name="tbMatchIndex" HorizontalAlignment="Left" TextWrapping="Wrap" Foreground="#FF00FF5D" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" TextOptions.TextFormattingMode="Display" FontSize="16" Margin="145.018,336.6,0,0" TextAlignment="Center" ToolTip="MATCH INDEX. RATING OF 1 = PERFECT MATCH" Width="100" Background="{DynamicResource DarkerBackGround}" VerticalAlignment="Top" Height="25.28" FontWeight="Bold" Text="{Binding MatchRating}" Padding="0"/>
+    	<TextBlock x:Name="tbFilesScanned" HorizontalAlignment="Left" TextWrapping="Wrap" Foreground="#FF00FF5D" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" TextOptions.TextFormattingMode="Display" FontSize="16" Margin="31.456,336.6,0,0" TextAlignment="Center" ToolTip="NUMBER OF FOLDERS SCANNED LOOKING FOR LOST TRACKS" Width="100" VerticalAlignment="Top" Height="25.28" FontWeight="Bold" Padding="0" Text="{Binding FilesScanned}" Background="{DynamicResource DarkerBackGround}"/>
+    	<Image x:Name="imgClose" HorizontalAlignment="Left" Height="40" Margin="703.274,18.16,0,0" VerticalAlignment="Top" Width="40" Stretch="UniformToFill" Source="/TuneNazity;component/Images/Close.png" RenderTransformOrigin="0.5,0.5" ToolTip="Quit Program">
+    		<Image.RenderTransform>
+    			<TransformGroup>
+    				<ScaleTransform/>
+    				<SkewTransform/>
+    				<RotateTransform/>
+    				<TranslateTransform/>
+    			</TransformGroup>
+    		</Image.RenderTransform>
+    		<i:Interaction.Triggers>
+    			<i:EventTrigger EventName="MouseLeftButtonDown">
+    				<Command:EventToCommand Command="{Binding CloseAppConfirm, Mode=OneWay}"/>
+    			</i:EventTrigger>
+    			<i:EventTrigger EventName="MouseLeave">
+    				<ei:ControlStoryboardAction Storyboard="{StaticResource exitButtonAni}" ControlStoryboardOption="TogglePlayPause"/>
+    			</i:EventTrigger>
+    			<i:EventTrigger EventName="MouseEnter">
+    				<ei:ControlStoryboardAction Storyboard="{StaticResource exitButtonAni}" ControlStoryboardOption="TogglePlayPause"/>
+    			</i:EventTrigger>
+    		</i:Interaction.Triggers>
+    	</Image>
+    	<Image x:Name="imgMinimize" HorizontalAlignment="Left" Height="40" Margin="636.938,17.16,0,0" VerticalAlignment="Top" Width="40" Stretch="UniformToFill" Source="/TuneNazity;component/Images/Minimize.png" RenderTransformOrigin="0.5,0.5" ToolTip="Minimize Program">
+    		<Image.RenderTransform>
+    			<TransformGroup>
+    				<ScaleTransform/>
+    				<SkewTransform/>
+    				<RotateTransform/>
+    				<TranslateTransform/>
+    			</TransformGroup>
+    		</Image.RenderTransform>
+    		<i:Interaction.Triggers>
+    			<i:EventTrigger EventName="MouseLeftButtonDown">
+    				<Command:EventToCommand Command="{Binding MinimizeWindowNow, Mode=OneWay}"/>
+    			</i:EventTrigger>
+    			<i:EventTrigger EventName="MouseEnter">
+    				<ei:ControlStoryboardAction ControlStoryboardOption="TogglePlayPause" Storyboard="{StaticResource minButtonAni}"/>
+    			</i:EventTrigger>
+    			<i:EventTrigger EventName="MouseLeave">
+    				<ei:ControlStoryboardAction ControlStoryboardOption="TogglePlayPause" Storyboard="{StaticResource minButtonAni}"/>
+    			</i:EventTrigger>
+    		</i:Interaction.Triggers>
+    	</Image>
+    	<Image x:Name="Logo" HorizontalAlignment="Left" Height="135.841" Margin="-115.459,-13.773,0,0" VerticalAlignment="Top" Width="602.333" Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5" ToolTip="Move, Search, Discover and Organize your iTunes tracks." Source="Images/TuneNazity.png">
+    		<i:Interaction.Triggers>
+    			<i:EventTrigger EventName="MouseLeftButtonDown">
+    				<Command:EventToCommand Command="{Binding MoveWindowNow, Mode=OneWay}"/>
+    			</i:EventTrigger>
+    		</i:Interaction.Triggers>
+    		<Image.RenderTransform>
+    			<TransformGroup>
+    				<ScaleTransform ScaleX="0.6" ScaleY="0.6"/>
+    				<SkewTransform/>
+    				<RotateTransform/>
+    				<TranslateTransform/>
+    			</TransformGroup>
+    		</Image.RenderTransform>
+    	</Image>
+    	<Border x:Name="SearchScope_Playlist" Margin="258.565,336.598,38.693,0" Background="{DynamicResource DarkerBackGround}" VerticalAlignment="Top" Padding="0" >
+    		<StackPanel Orientation="Horizontal" >
+    			<TextBlock x:Name="tbSend2Playlist" HorizontalAlignment="Left" TextWrapping="Wrap" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" TextOptions.TextFormattingMode="Display" FontSize="16" TextAlignment="Center" Text="{Binding Send2PlayList}" ToolTip="PLAYLIST WHERE TRACKS WILL BE SENT  IN DISCOVER MODE" Padding="0" FontWeight="Bold" Foreground="#FFFFC500"/>
+    			<TextBox x:Name="tbUpdateLocation"  IsReadOnly="True" TextWrapping="WrapWithOverflow" Padding="0" HorizontalAlignment="Left" Width="464.083" Background="{x:Null}" Foreground="#FF46FFE6" VerticalAlignment="Top" BorderBrush="{x:Null}" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" FontSize="16" Text="{Binding SearchCriteria}" VerticalContentAlignment="Stretch" ToolTip="SEARCH STARTING POINT FOR LOST TRACKS"/>
+    		</StackPanel>
+    	</Border>
+    	<TabControl x:Name="ControlCenter" Style="{DynamicResource TabControl_Theme}" Margin="21.356,0,0,22.425" Height="163.137" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="716.611" Background="{x:Null}" BorderBrush="{x:Null}">
+    		<TabItem Header="   SEARCH" Style="{DynamicResource TabItem_Theme}" Margin="16.751,0,-16.751,0" FontSize="16" Width="110" Height="32" FontFamily="Arial">
+                <Border Background="Black" CornerRadius="15">
+                    <Grid>
+    					<Border x:Name="CommandsSearch" VerticalAlignment="Top" Width="714.265" Height="125.788" BorderThickness="3" CornerRadius="12" HorizontalAlignment="Left" Margin="0.102,1.024,0,0" BorderBrush="{DynamicResource GreenBorder}">
+    						<Border.Background>
+    							<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+    								<GradientStop Color="Black" Offset="0"/>
+    								<GradientStop Color="#FF1F1D1D" Offset="1"/>
+    								<GradientStop Color="#FF363333" Offset="0.026"/>
+    								<GradientStop Color="#FF363333" Offset="0.978"/>
+    								<GradientStop Color="#FF1A1818" Offset="0.871"/>
+    								<GradientStop Color="#FF040404" Offset="0.142"/>
+    							</LinearGradientBrush>
+    						</Border.Background>
+    						<Grid Width="703.264" Margin="8.001,7,0,7" HorizontalAlignment="Left">
+                                <CheckBox x:Name="cbRemoveDeadTracks" Content=" Search For Lost Tracks" HorizontalAlignment="Left" Margin="6,34.668,0,0" VerticalAlignment="Top" Foreground="#FFDFE90A" FontSize="16" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" ToolTip="FIND LOST TRACKS USING SEARCH CRITERIA" IsChecked="{Binding FindDeadTracks}" Style="{DynamicResource CoolCheckbox2}" Width="232.333" Visibility="{Binding Search4LostTracksCheckBoxVisibility}" >
+                                	<i:Interaction.Triggers>
+                                		<i:EventTrigger EventName="Click">
+                                            <Command:EventToCommand Command="{Binding SearchTabCheckBoxManager}" 
+                                            CommandParameter="{Binding Name, ElementName=cbRemoveDeadTracks}"/>
+                                		</i:EventTrigger>
+                                	</i:Interaction.Triggers>
+                                </CheckBox>
+                                <CheckBox x:Name="cbFindDuplicates" Content=" Find Duplicates" HorizontalAlignment="Left" Margin="6,-1,0,0" VerticalAlignment="Top" Foreground="#FFDFE90A" FontSize="16" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" Background="#FFF4F4F4" ToolTip="REMOVE DUPLICATE TRACKS - KEEP HIGHEST BIT RATE AND PLAYLIST SETTINGS" IsChecked="{Binding FindDuplicateTracks}" Style="{DynamicResource CoolCheckbox2}" Width="173.885" Visibility="{Binding FindDuplicatesCheckBoxVisibility}">
+                                	<i:Interaction.Triggers>
+                                		<i:EventTrigger EventName="Click">
+                                            <Command:EventToCommand Command="{Binding SearchTabCheckBoxManager}" CommandParameter="{Binding Name, ElementName=cbFindDuplicates}" />
+                                		</i:EventTrigger>
+                                	</i:Interaction.Triggers>
+                                </CheckBox>
+    							<CheckBox x:Name="cbRemoveOneStarTracks" Content=" Clear Low-Rated / Dead  Tracks" HorizontalAlignment="Left" Margin="6,71,0,-0.212" VerticalAlignment="Top" Foreground="#FFDFE90A" FontSize="16" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" ToolTip="REMOVE 1 STAR RATED &amp; DEAD TRACKS. TRY TO FIX ORPHANED TRACKS BEFORE YOU USE THIS OPTION." IsChecked="{Binding RemoveLowRatedTracks}" Style="{DynamicResource CoolCheckbox2}" Width="293.333" Visibility="{Binding ClearLowRatedDeadTracksCheckBoxVisibility}">
+    								<i:Interaction.Triggers>
+    									<i:EventTrigger EventName="Click">
+                                            <Command:EventToCommand Command="{Binding SearchTabCheckBoxManager, Mode=OneWay}" CommandParameter="{Binding Name, ElementName=cbRemoveOneStarTracks}"/>
+    									</i:EventTrigger>
+    								</i:Interaction.Triggers>
+    							</CheckBox>
+    							<Button x:Name="btnStart" Content="Start" Style="{DynamicResource Button_Theme}" Margin="561.356,64.787,0,8.001" Height="33" Visibility="{Binding StartButtonVisibility}" Width="118" HorizontalAlignment="Left" d:LayoutOverrides="Width" FontSize="14.667">
+    								<i:Interaction.Triggers>
+    									<i:EventTrigger EventName="Click">
+    										<Command:EventToCommand Command="{Binding StartApp, Mode=OneWay}"/>
+    									</i:EventTrigger>
+    								</i:Interaction.Triggers>
+    								<Button.Background>
+    									<RadialGradientBrush GradientOrigin="0.498,0.145">
+    										<GradientStop Color="#FFC39600" Offset="1"/>
+    										<GradientStop Color="#FFFEFF08"/>
+    									</RadialGradientBrush>
+    								</Button.Background>
+    							</Button>
+    							<Button x:Name="SearchScope" Content="Search Scope" Style="{DynamicResource Button_Theme}" Margin="561.356,6.575,0,66.212" FontFamily="AArial" Width="118" Height="33" HorizontalAlignment="Left" d:LayoutOverrides="Width" FontSize="14.667" Visibility="{Binding ScopeStatusVisibility}">
+    								<i:Interaction.Triggers>
+    									<i:EventTrigger EventName="Click">
+    										<Command:EventToCommand Command="{Binding SelectDrives2Search, Mode=OneWay}"/>
+    									</i:EventTrigger>
+    								</i:Interaction.Triggers>
+    							</Button>
+    							<Grid x:Name="BusyLight" Background="Transparent" HorizontalAlignment="Left" Margin="564.651,16,0,-6.212" Width="110" Visibility="{Binding BusyStatusVisibility}" Height="96" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" ToolTip="CANCEL SCAN" Cursor="Hand">
+    								<i:Interaction.Triggers>
+    									<i:EventTrigger EventName="MouseLeftButtonDown">
+    										<Command:EventToCommand Command="{Binding CancelScan, Mode=OneWay}"/>
+    									</i:EventTrigger>
+    								</i:Interaction.Triggers>
+    								<Grid.RenderTransform>
+    									<TransformGroup>
+    										<ScaleTransform/>
+    										<SkewTransform/>
+    										<RotateTransform/>
+    										<TranslateTransform/>
+    									</TransformGroup>
+    								</Grid.RenderTransform>
+                                    <Viewbox x:Name="viewbox" Margin="2,-11,-2,11" RenderTransformOrigin="0.5,0.5">
+                                    	<Viewbox.RenderTransform>
+                                    		<TransformGroup>
+                                    			<ScaleTransform/>
+                                    			<SkewTransform/>
+                                    			<RotateTransform/>
+                                    			<TranslateTransform/>
+                                    		</TransformGroup>
+                                    	</Viewbox.RenderTransform>
+    									<Grid Width="150" Height="150">
+                                            <Border Margin="-2.489,0,0,0">
+    											<Grid x:Name="grid" RenderTransformOrigin="0.5,0.5">
+    												<Grid.RenderTransform>
+    													<TransformGroup>
+    														<ScaleTransform/>
+    														<SkewTransform/>
+    														<RotateTransform/>
+    														<TranslateTransform/>
+    													</TransformGroup>
+    												</Grid.RenderTransform>
+    												<Ellipse Height="150" Width="150" d:LayoutOverrides="Width, VerticalMargin" HorizontalAlignment="Right" Cursor="Hand">
+    													<Ellipse.Fill>
+    														<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+    															<GradientStop Offset="0" Color="White"/>
+    															<GradientStop Offset="1" Color="Black"/>
+    															<GradientStop Color="#FF5A5959" Offset="0.098"/>
+    															<GradientStop Color="#FF514F4F" Offset="0.15"/>
+    															<GradientStop Color="#FFACABAB" Offset="0.267"/>
+    														</LinearGradientBrush>
+    													</Ellipse.Fill>
+    												</Ellipse>
+    												<Ellipse Height="145" Width="145" Margin="4.989,2.5,2.5,2.5" d:IsHidden="True">
+    													<Ellipse.Fill>
+    														<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+    															<GradientStop Color="#FF4B4848" Offset="0"/>
+    															<GradientStop Color="#FF969191" Offset="1"/>
+    														</LinearGradientBrush>
+    													</Ellipse.Fill>
+    												</Ellipse>
+    												<Rectangle x:Name="aaa" Width="130" Height="130" RadiusX="75" RadiusY="75" StrokeThickness="2" Margin="0,0,10,10" HorizontalAlignment="Right"  VerticalAlignment="Bottom">
+    													<Rectangle.Fill>
+    														<RadialGradientBrush GradientOrigin="0.5,0.5">
+    															<GradientStop Color="Yellow" Offset="0" />
+    															<GradientStop Color="Orange" Offset="0.05" />
+    															<GradientStop Color="Red" Offset="0.25" />
+    															<GradientStop Color="Black" Offset="0.7" />
+    														</RadialGradientBrush>
+    													</Rectangle.Fill>
+    													<Rectangle.Stroke>
+    														<RadialGradientBrush GradientOrigin="0.5,0.5">
+    															<GradientStop Color="DarkSlateGray" Offset="0.9" />
+    															<GradientStop Color="Silver" Offset="0.9" />
+    															<GradientStop Color="#FF171515" Offset="1.0" />
+    														</RadialGradientBrush>
+    													</Rectangle.Stroke>
+    													<!--<Rectangle.Triggers>
+    												<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+    													<BeginStoryboard>
+    														<Storyboard Storyboard.TargetProperty ="Fill.GradientStops[3].Offset">
+    															<DoubleAnimation From="0.5" To="0.8" Duration="0:0:2" AutoReverse="True" RepeatBehavior="Forever" DecelerationRatio="1" />
+    														</Storyboard>
+    													</BeginStoryboard>
+    												</EventTrigger>
+    											</Rectangle.Triggers>-->
+    												</Rectangle>
+    												<Ellipse x:Name="bbb" Height="126" Width="126" Margin="0,0,12,12" HorizontalAlignment="Right" d:LayoutOverrides="Width, Height" VerticalAlignment="Bottom" Fill="#7E000000" >
+    													<!--<Ellipse.Triggers>
+    												<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+    													<BeginStoryboard>
+    														<Storyboard Storyboard.TargetProperty ="Opacity">
+    															<DoubleAnimation From="1" To="0" Duration="0:0:2" AutoReverse="True" RepeatBehavior="Forever" DecelerationRatio="1"/>
+    														</Storyboard>
+    													</BeginStoryboard>
+    												</EventTrigger>
+    											</Ellipse.Triggers>-->
+    												</Ellipse>
+    												<Path Stretch="Fill" Data="F1 M72.551291,11.547777 C72.481308,11.488819 83.665941,11.734761 90.030663,13.313476 L90.123281,22.02957 C84.489409,20.748453 78.404819,20.089309 72.906123,20.093606 67.403882,20.097906 60.771905,20.823555 54.362028,22.451452 L54.414704,13.642125 C61.911611,11.838762 72.567634,11.561545 72.551291,11.547777 z" Height="9.529" RenderTransformOrigin="0.5,0.5" Margin="55.122,0,66.155,2.384" VerticalAlignment="Bottom">
+    													<Path.Fill>
+    														<LinearGradientBrush EndPoint="0,0" StartPoint="1,0">
+    															<GradientStop Color="#FF938E8E" Offset="0"/>
+    															<GradientStop Color="LightGray" Offset="0.139"/>
+    															<GradientStop Color="#FFCACACA" Offset="0.868"/>
+    															<GradientStop Color="#FF938E8E" Offset="1"/>
+    														</LinearGradientBrush>
+    													</Path.Fill>
+    													<Path.RenderTransform>
+    														<TransformGroup>
+    															<ScaleTransform/>
+    															<SkewTransform/>
+    															<RotateTransform Angle="-179.78200000000004"/>
+    															<TranslateTransform X="7.3142779141860217" Y="-0.14608523592449529"/>
+    														</TransformGroup>
+    													</Path.RenderTransform>
+    												</Path>
+    												<Path Stretch="Fill" Data="F1 M72.817867,11.499552 C78.584606,11.592788 83.665941,11.734761 90.030663,13.313476 L90.123281,22.02957 C84.489409,20.748453 79.315223,20.093606 72.906123,20.093606 65.906423,20.093606 60.780418,20.605079 54.370541,22.232976 L54.442711,13.502591 C61.939618,11.699228 70.182233,11.456939 72.817867,11.499552 z" Height="9.378" RenderTransformOrigin="0.5,0.5" Width="31.205" HorizontalAlignment="Right" Margin="0,0,13.319,28.672" VerticalAlignment="Bottom">
+    													<Path.RenderTransform>
+    														<TransformGroup>
+    															<ScaleTransform/>
+    															<SkewTransform/>
+    															<RotateTransform Angle="128.27200000000002"/>
+    															<TranslateTransform X="7.37882483268352" Y="-0.026378358317671768"/>
+    														</TransformGroup>
+    													</Path.RenderTransform>
+    													<Path.Fill>
+    														<LinearGradientBrush EndPoint="0,0" StartPoint="1,0">
+    															<GradientStop Color="#FF8C8888" Offset="0.139"/>
+    															<GradientStop Color="LightGray" Offset="0.318"/>
+    															<GradientStop Color="#FFCACACA" Offset="0.648"/>
+    															<GradientStop Color="#FF7F7B7B" Offset="0.875"/>
+    														</LinearGradientBrush>
+    													</Path.Fill>
+    												</Path>
+    												<Path Stretch="Fill" Data="F1 M72.551291,11.547777 C76.675498,11.645569 83.665941,11.734761 90.030663,13.313476 L90.123281,22.02957 C84.489409,20.748453 79.315223,20.093606 72.906123,20.093606 65.906423,20.093606 60.750901,20.795322 54.341024,22.423219 L54.414704,13.642125 C61.911611,11.838762 69.916053,11.485291 72.551291,11.547777 z" Height="9.503" RenderTransformOrigin="0.5,0.5" Width="31.23" HorizontalAlignment="Left" Margin="0,0,0,30.063" VerticalAlignment="Bottom">
+    													<Path.RenderTransform>
+    														<TransformGroup>
+    															<ScaleTransform/>
+    															<SkewTransform/>
+    															<RotateTransform Angle="-125.73500000000001"/>
+    															<TranslateTransform X="7.2898730908178564" Y="-0.1325903170362821"/>
+    														</TransformGroup>
+    													</Path.RenderTransform>
+    													<Path.Fill>
+    														<LinearGradientBrush EndPoint="0,0" StartPoint="1,0">
+    															<GradientStop Color="#FF7E7A7A" Offset="0.139"/>
+    															<GradientStop Color="LightGray" Offset="0.318"/>
+    															<GradientStop Color="#FFCACACA" Offset="0.648"/>
+    															<GradientStop Color="#FF8B8686" Offset="0.875"/>
+    														</LinearGradientBrush>
+    													</Path.Fill>
+    												</Path>
+    												<Path Stretch="Fill" Fill="#18FFFFFF" Data="F1 M73.513275,11.114881 C80.822575,11.114881 93.737426,12.633565 101.72215,16.667828 L100.85418,18.663431 C91.480155,14.758991 79.748782,13.631041 73.339682,13.631041 66.339982,13.631041 55.372296,15.887143 47.560595,19.530563 L46.519347,17.622254 C53.028732,14.065113 64.981175,11.114881 73.513275,11.114881 z" Height="7.348" Margin="53.171,15.761,51.136,0" VerticalAlignment="Top"/>
+    											</Grid>
+    										</Border>
+                                            <Border Margin="24.623,21.7,22.879,86.396">
+                                            	<Grid>
+                                            		<Path Stretch="Fill" Fill="#B3FFFFFF" Data="F1 M 75.4166,11.5C 82.7259,11.5 90.142,13.6747 96.2188,15.6875L 94.3438,21.7292C 88.8547,20.0514 81.2529,18.4792 74.8438,18.4792C 67.8441,18.4792 60.1394,20.144 54.2188,22.2292L 52.0788,15.9034C 59.06,13.1583 66.8845,11.5 75.4166,11.5 Z " Height="9.369" Margin="30.004,0,33.968,0" VerticalAlignment="Top"/>
+                                            		<Path Stretch="Fill" Fill="#67FFFFFF" Data="F1 M 79.6146,31.9583C 79.6146,31.7589 69.369,31.2892 61.3021,32.7083L 60.6621,28.7345C 70.0514,27.0358 79.7188,27.7978 79.8438,27.8975" Height="4.425" Margin="37.495,14.094,48.26,0" VerticalAlignment="Top"/>
+                                            		<Path Stretch="Fill" Fill="#4DFFFFFF" Data="F1 M 78.2572,53.6072C 78.2572,53.4972 71.5757,53.0193 68.084,53.9375L 67.2397,51.7575C 71.3569,50.5487 78.4784,51.2404 78.5521,51.2954" Height="2.523" Margin="43.237,34.534,49.388,0" VerticalAlignment="Top"/>
+                                            		<Path Stretch="Fill" Fill="#4DFFFFFF" Data="F1 M 80.6261,61.6314C 80.6261,61.5177 73.8057,61.0243 70.2414,61.9724L 69.3796,59.7214C 73.5823,58.4733 80.8518,59.1875 80.9271,59.2443" Height="2.604" Margin="44.16,39.275,48.26,0" VerticalAlignment="Top"/>
+                                            		<Path Stretch="Fill" Fill="#67FFFFFF" Data="F1 M 41.3021,45.6875C 41.1543,45.4859 39.5365,46.3724 34.6771,48.1875L 29.8021,45.1875C 33.3021,42.0625 36.3021,41.1875 36.3021,41.0625" Width="10.037" Height="6.222" HorizontalAlignment="Left" Margin="10.56,25.813,0,0" VerticalAlignment="Top"/>
+                                            		<Path Stretch="Fill" Fill="#4DFFFFFF" Data="F1 M 58.41,58.2115C 58.3384,58.1033 57.5853,58.554 55.3146,59.4598L 52.9888,57.8206C 54.6061,56.2075 56.0104,55.7781 56.0091,55.712" Width="4.732" Height="3.273" HorizontalAlignment="Left" Margin="30.798,38.606,0,0" VerticalAlignment="Top"/>
+                                            		<Path Stretch="Fill" Fill="#67FFFFFF" Data="F1 M 119.854,42.8865C 119.722,42.7074 118.197,43.6637 115.31,46.4396L 108.537,42.6644C 111.645,39.8885 114.31,39.1113 114.31,39.0002" Width="9.878" Height="6.497" HorizontalAlignment="Right" Margin="0,24.013,13.338,0" VerticalAlignment="Top"/>
+                                            		<Path Stretch="Fill" Fill="#4DFFFFFF" Data="F1 M 93.8733,57.6169C 93.8069,57.5167 93.5912,57.9289 92.1249,59.4886L 88.6946,57.3789C 90.2736,55.8189 91.6254,55.3802 91.6255,55.318" Width="4.52" Height="3.642" HorizontalAlignment="Right" Margin="0,38.262,36.015,0" VerticalAlignment="Top"/>
+                                            		<Path Stretch="Fill" Fill="#8DFFFFFF" Data="F1 M135.135,48.0071 C135.135,48.0071 133.274,49.4546 133.205,49.3856 131.344,46.4218 125.10277,37.924005 117.56577,33.106505 L120.514,28.4059 C126.783,33.5298 133.55,42.2173 135.135,48.0071 z" Width="15.336" Height="18.322" HorizontalAlignment="Right" Margin="0,14.762,0,0" VerticalAlignment="Top"/>
+                                            		<Path Stretch="Fill" Fill="#8DFFFFFF" Data="F1 M19.4206,49.9744 C19.3413,50.0273 17.4649,48.5473 17.7292,47.9658 20.2517,42.416 25.5294,33.4322 31.6565,28.2482 L34.80785,32.22886 C27.704517,37.267671 21.0064,46.5915 19.4206,49.9744 z" Width="14.929" Height="18.973" HorizontalAlignment="Left" Margin="0,14.624,0,0" VerticalAlignment="Top"/>
+                                            	</Grid>
+                                            </Border>
+    									</Grid>
+    								</Viewbox>
+    							</Grid>
+                            </Grid>
+    					</Border>
+    				</Grid>
+    			</Border>
+    		</TabItem>
+    		<TabItem Header="  DISCOVER" Style="{DynamicResource TabItem_Theme}" Margin="0,0,-20.815,0" FontSize="16" Width="130" HorizontalAlignment="Right" Height="32" FontFamily="Arial">
+    			<Border Background="Black" CornerRadius="15">
+                    
+    				<Grid>
+    					<Border x:Name="CommandsDiscover" VerticalAlignment="Top" Width="714.265" Height="125.788" BorderThickness="3" CornerRadius="12" HorizontalAlignment="Left" Margin="0.454,0.016,0,0" BorderBrush="{DynamicResource GreenBorder}">
+    						<Border.Background>
+    							<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+    								<GradientStop Color="Black" Offset="0"/>
+    								<GradientStop Color="#FF1F1D1D" Offset="1"/>
+    								<GradientStop Color="#FF363333" Offset="0.026"/>
+    								<GradientStop Color="#FF363333" Offset="0.978"/>
+    								<GradientStop Color="#FF1A1818" Offset="0.871"/>
+    								<GradientStop Color="#FF040404" Offset="0.142"/>
+    							</LinearGradientBrush>
+    						</Border.Background>
+    						<Grid Width="695.264" Margin="8.001,7,0,7" HorizontalAlignment="Left">
+    							<Button x:Name="AudioMode" Content="AUDIO MODE" HorizontalAlignment="Left" Height="26.21" Margin="10,10,0,0" VerticalAlignment="Top" Width="135.5" Foreground="#FFDFE90A" FontFamily="Helvetica LT Std Cond" FontSize="16" TextOptions.TextFormattingMode="Display" ToolTip="" Style="{DynamicResource InformButton}"/>
+    							<Button x:Name="AutoPlaylist" Content="AUTO PLAYLIST" HorizontalAlignment="Left" Height="26.21" Margin="10,59.787,0,0" VerticalAlignment="Top" Width="135.5" Foreground="#FFDFE90A" FontFamily="Helvetica LT Std Cond" FontSize="16" TextOptions.TextFormattingMode="Display" ToolTip="" Style="{DynamicResource InformButton}">
+    								<i:Interaction.Triggers>
+    									<i:EventTrigger EventName="Click">
+    										<Command:EventToCommand Command="{Binding SelectDrives2Search, Mode=OneWay}"/>
+    									</i:EventTrigger>
+    								</i:Interaction.Triggers>
+    							</Button>
+    							<Button x:Name="AutoRating" Content="AUTO RATING" HorizontalAlignment="Left" Height="26.21" Margin="177.098,10,0,0" VerticalAlignment="Top" Width="135.5" Foreground="#FFDFE90A" FontFamily="Helvetica LT Std Cond" FontSize="16" TextOptions.TextFormattingMode="Display" ToolTip="" Style="{DynamicResource InformButton}">
+    								<i:Interaction.Triggers>
+    									<i:EventTrigger EventName="Click">
+    										<Command:EventToCommand Command="{Binding SelectDrives2Search, Mode=OneWay}"/>
+    									</i:EventTrigger>
+    								</i:Interaction.Triggers>
+    							</Button>
+    							<StackPanel x:Name="Rating1" Margin="562.403,38.895,0,42.893" Orientation="Horizontal" HorizontalAlignment="Left" Width="130.505">
+    								<Image x:Name="imgRating6" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="22.001" Source="Images/Star.png" Margin="0,0,2,0"/>
+    								<Image x:Name="imgRating7" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="22.001" Source="Images/Star.png" Margin="0,0,2,0"/>
+    								<Image x:Name="imgRating8" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="22.001" Source="Images/Star.png" Margin="0,0,2,0"/>
+    								<Image x:Name="imgRating9" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="22.001" Source="Images/Star.png" Margin="0,0,2,0"/>
+    								<Image x:Name="imgRating10" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="22.001" Source="Images/Star.png"/>
+    							</StackPanel>
+    							<Border x:Name="SongNameBorder" HorizontalAlignment="Left" Margin="177.098,60.997,0,0" VerticalAlignment="Top" BorderThickness="2" BorderBrush="{DynamicResource Chrome}" >
+    								<TextBlock x:Name="tbSongName" TextWrapping="Wrap" Foreground="#FF2218FF" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" TextOptions.TextFormattingMode="Display" FontSize="16" TextAlignment="Center" Text="{Binding MatchRating}" ToolTip="MATCH INDEX. RATING OF 1 = 100% MATCH" Height="21"/>
+    							</Border>
+    							<Button x:Name="btnStart1" Content="Start" Style="{DynamicResource Button_Theme}" Margin="559.356,68.895,0,2.892" Height="34" HorizontalAlignment="Left" Width="122" FontSize="14.667" Background="{DynamicResource Gold}">
+    								<i:Interaction.Triggers>
+    									<i:EventTrigger EventName="Click">
+    										<Command:EventToCommand Command="{Binding StartApp, Mode=OneWay}"/>
+    									</i:EventTrigger>
+    								</i:Interaction.Triggers>
+    							</Button>
+    							<Button x:Name="btnUpdate" Content="Update" Style="{DynamicResource Button_Theme}" Margin="559.356,2.472,0,72.893" HorizontalAlignment="Left" Width="122" FontSize="14.667"/>
+    						</Grid>
+    					</Border>
+    				</Grid>
+    			</Border>
+    		</TabItem>
+    		<TabItem Header=" SESSION " Width="120" Height="32" Margin="24.998,-0.667,-24.999,0.666" FontFamily="Arial" FontSize="16" Style="{DynamicResource TabItem_Theme}" d:LayoutOverrides="HorizontalMargin">
+    			<Grid>
+    				<Border x:Name="CommandsLogs" VerticalAlignment="Top" Width="714.265" Height="125.788" BorderThickness="3" CornerRadius="12" HorizontalAlignment="Left" Margin="0.454,0.016,-0.108,0" BorderBrush="{DynamicResource GreenBorder}">
+    					<Border.Background>
+    						<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+    							<GradientStop Color="Black" Offset="0"/>
+    							<GradientStop Color="#FF1F1D1D" Offset="1"/>
+    							<GradientStop Color="#FF363333" Offset="0.026"/>
+    							<GradientStop Color="#FF363333" Offset="0.978"/>
+    							<GradientStop Color="#FF1A1818" Offset="0.871"/>
+    							<GradientStop Color="#FF040404" Offset="0.142"/>
+    						</LinearGradientBrush>
+    					</Border.Background>
+    					<Grid Width="706.764" Margin="4.501,-3,-3,-3" HorizontalAlignment="Left">
+                            <ListView Margin="0,8,8,8" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFFFF63F" ItemsSource="{Binding LogDataCollection}" ItemContainerStyle="{StaticResource ListViewItemContainerStyle}" Style="{StaticResource lvStyle1}" FontSize="12" FontFamily="/TuneNazity;component/Fonts/#Segoe UI"  >
+			                <!--START-->
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Width="40" Header="Code"  CellTemplate="{StaticResource lvImageStyle}"  HeaderContainerStyle="{StaticResource ResourceKey=GridViewColumnStyle1}" />
+										<GridViewColumn Width="140" Header="Track #"  CellTemplate="{StaticResource lvTextStyle}"  DisplayMemberBinding="{Binding TrackNumber}" HeaderContainerStyle="{StaticResource ResourceKey=GridViewColumnStyle1}" />
+                                        <GridViewColumn Width="240" Header="Title"  DisplayMemberBinding="{Binding TrackTitle}" HeaderContainerStyle="{StaticResource ResourceKey=GridViewColumnStyle1}" />
+                                        <GridViewColumn Width="140" Header="File Name" DisplayMemberBinding="{Binding TrackFileName}" HeaderContainerStyle="{StaticResource ResourceKey=GridViewColumnStyle1}" />
+                                        <GridViewColumn Width="140" CellTemplate="{StaticResource lvTextStyle}" DisplayMemberBinding="{Binding TrackStatus}" Header="Status" HeaderContainerStyle="{StaticResource ResourceKey=GridViewColumnStyle1}" />
+                                    </GridView>
+                                </ListView.View>
+                                <!--END-->
+    						</ListView>
+    					</Grid>
+    				</Border>
+    			</Grid>
+    		</TabItem>
+    		<TabItem Header="    SETTINGS" Style="{DynamicResource TabItem_Theme}" Margin="28.923,0,-28.924,0" FontSize="16" Width="120" Height="32" FontFamily="Arial" d:LayoutOverrides="HorizontalMargin">
+    			<Grid>
+    				<Border x:Name="CommandsSettings" VerticalAlignment="Top" Width="714.265" Height="125.788" BorderThickness="3" CornerRadius="12" HorizontalAlignment="Left" Margin="0.454,0.016,-0.108,0" BorderBrush="{DynamicResource GreenBorder}">
+    					<Border.Background>
+    						<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+    							<GradientStop Color="Black" Offset="0"/>
+    							<GradientStop Color="#FF1F1D1D" Offset="1"/>
+    							<GradientStop Color="#FF363333" Offset="0.026"/>
+    							<GradientStop Color="#FF363333" Offset="0.978"/>
+    							<GradientStop Color="#FF1A1818" Offset="0.871"/>
+    							<GradientStop Color="#FF040404" Offset="0.142"/>
+    						</LinearGradientBrush>
+    					</Border.Background>
+    					<Grid Width="695.264" Margin="8.001,7,0,7" HorizontalAlignment="Left">
+    						<Button Content="AUDIO ALERTS" HorizontalAlignment="Left" Height="26.21" Margin="10,10,0,0" VerticalAlignment="Top" Width="135.5" Foreground="#FFDFE90A" FontFamily="Helvetica LT Std Cond" FontSize="16" TextOptions.TextFormattingMode="Display" ToolTip="" Style="{DynamicResource InformButton}"/>
+    						<Button Content="MUSIC LIB" HorizontalAlignment="Left" Height="26.21" Margin="10,59.787,0,0" VerticalAlignment="Top" Width="135.5" Foreground="#FFDFE90A" FontFamily="Helvetica LT Std Cond" FontSize="16" TextOptions.TextFormattingMode="Display" ToolTip="" Style="{DynamicResource InformButton}">
+    							<i:Interaction.Triggers>
+    								<i:EventTrigger EventName="Click">
+    									<Command:EventToCommand Command="{Binding SelectDrives2Search, Mode=OneWay}"/>
+    								</i:EventTrigger>
+    							</i:Interaction.Triggers>
+    						</Button>
+    						<Button Content="SHOW LOG" HorizontalAlignment="Left" Height="26.21" Margin="177.098,10,0,0" VerticalAlignment="Top" Width="135.5" Foreground="#FFDFE90A" FontFamily="Helvetica LT Std Cond" FontSize="16" TextOptions.TextFormattingMode="Display" ToolTip="" Style="{DynamicResource InformButton}">
+    							<i:Interaction.Triggers>
+    								<i:EventTrigger EventName="Click">
+    									<Command:EventToCommand Command="{Binding SelectDrives2Search, Mode=OneWay}"/>
+    								</i:EventTrigger>
+    							</i:Interaction.Triggers>
+    						</Button>
+    						<Border x:Name="SongNameBorder1" HorizontalAlignment="Left" Margin="177.098,60.997,0,0" VerticalAlignment="Top" BorderThickness="2" BorderBrush="{DynamicResource Chrome}" >
+    							<TextBlock x:Name="tbSongName1" TextWrapping="Wrap" Foreground="#FF2218FF" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" TextOptions.TextFormattingMode="Display" FontSize="16" TextAlignment="Center" Text="{Binding MatchRating}" ToolTip="MATCH INDEX. RATING OF 1 = 100% MATCH" Height="21"/>
+    						</Border>
+    						<Button x:Name="btnUpdate1" Content="Update" Style="{DynamicResource Button_Theme}" Margin="588.111,2.472,0,72.893" HorizontalAlignment="Left" Width="93.245" FontSize="14.667"/>
+    					</Grid>
+    				</Border>
+    			</Grid>
+    		</TabItem>
+    	</TabControl>
+    	<Image x:Name="Search" Height="20" Margin="46.678,437.829,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Source="Images/Search3.png"/>
+    	<Image x:Name="Discover" HorizontalAlignment="Left" Height="20" Margin="158.851,437.829,0,0" VerticalAlignment="Top" Width="20" Source="Images/NoteMusic.png"/>
+    	<Image x:Name="Settings" HorizontalAlignment="Left" Height="20" Margin="294.518,437.002,0,0" VerticalAlignment="Top" Width="20" Source="Images/Info2.png"/>
+    	<TextBlock x:Name="tbAverageLookup" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="#FFFFF63F" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" TextOptions.TextFormattingMode="Display" FontSize="16" Margin="512.307,135.101,0,0" TextAlignment="Center" Text="{Binding AverageTrackLookupTIme}" ToolTip="AVERAGE TIME  TO FIND A LOST  TRACK" Width="100" Background="{DynamicResource GlassFill}" Height="25.28"/>
+    	<Image x:Name="Settings_Copy" HorizontalAlignment="Left" Height="20" Margin="419.348,437.829,0,0" VerticalAlignment="Top" Width="20" Source="Images/gear.png"/>
+    </Grid>
+</Window>

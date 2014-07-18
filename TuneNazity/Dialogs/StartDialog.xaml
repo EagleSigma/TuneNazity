@@ -1,0 +1,340 @@
+﻿<Window
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+	x:Class="TuneNazity.StartDialog"
+	x:Name="Window"
+	Title="StartDialog"
+	Width="473" Height="308.5" WindowStyle="None" AllowsTransparency="True" Background="{x:Null}" Foreground="{x:Null}" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+
+	<Window.Resources>
+			
+
+
+
+			
+		<Style x:Key="MyFocusVisual">
+			<Setter Property="Control.Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type Control}">
+						<Grid Margin="3 2">
+							<Rectangle x:Name="r1" StrokeThickness="1" Stroke="Black" StrokeDashArray="2 2"/>
+							<Border x:Name="border" Width="{TemplateBinding ActualWidth}" Height="{TemplateBinding ActualHeight}"  CornerRadius="2" BorderThickness="1" />
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<LinearGradientBrush x:Key="GreenBorderLarge" EndPoint="0.5,1" StartPoint="0.5,0">
+			<GradientStop Color="#FF4F9E00" Offset="1"/>
+			<GradientStop Color="#FFC0FFA3"/>
+		</LinearGradientBrush>
+
+		<LinearGradientBrush x:Key="GlassFill" EndPoint="0.5,1" StartPoint="0.5,0">
+			<GradientStop Color="#3FB2B2B2" Offset="0"/>
+			<GradientStop Color="#19FFFFFF" Offset="1"/>
+			<GradientStop Color="#33999999" Offset="0.091"/>
+			<GradientStop Color="#4C2D2D2D" Offset="0.178"/>
+			<GradientStop Color="#33E2E2E2" Offset="0.865"/>
+			<GradientStop Color="#FFCBCBCB" Offset="0.974"/>
+			<GradientStop Color="#4C7A7A7A" Offset="0.483"/>
+		</LinearGradientBrush>
+
+		<Style x:Key="ShadowStyle">
+			<Setter Property="Control.Foreground" Value="Black" />
+		</Style>
+		<LinearGradientBrush x:Key="Dialog-Dark" EndPoint="0.5,1" StartPoint="0.5,0">
+			<GradientStop Color="#7FA2A2A2" Offset="0"/>
+			<GradientStop Color="#7F807E7E" Offset="1"/>
+			<GradientStop Color="#FF1D1C1C" Offset="0.03"/>
+			<GradientStop Color="#FF424242" Offset="0.978"/>
+			<GradientStop Color="#7F2F2F2F" Offset="0.513"/>
+		</LinearGradientBrush>
+
+
+		<Style x:Key="InformButton" TargetType="{x:Type Button}">
+			<Setter Property="OverridesDefaultStyle" Value="True"/>
+			<Setter Property="Margin" Value="2"/>
+			<Setter Property="FontFamily" Value="Helvetica LT Std Cond Blk"/>
+			<Setter Property="TextOptions.TextFormattingMode" Value="Display"/> 
+			<Setter Property="FontSize" Value="16px"/>
+			<Setter Property="FocusVisualStyle" Value="{StaticResource MyFocusVisual}" />
+			<Setter Property="Background" Value="{DynamicResource GlassFill}" />
+                
+
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type Button}">
+						<Border x:Name="border" 
+							BorderThickness="2"
+							Padding="4,2" 
+							BorderBrush="DarkGray" 
+							CornerRadius="8" 
+							Background="{TemplateBinding Background}">
+							<Grid >
+								<ContentPresenter HorizontalAlignment="Center" 
+									VerticalAlignment="Center" x:Name="contentShadow" 
+									Style="{StaticResource ShadowStyle}">
+									<ContentPresenter.RenderTransform>
+										<TranslateTransform X="0" Y="0" />
+									</ContentPresenter.RenderTransform>
+								</ContentPresenter>
+								<ContentPresenter HorizontalAlignment="Center" 
+									VerticalAlignment="Center" x:Name="content"/>
+							</Grid>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="border" Property="BorderBrush" Value="#FF4788c8" />
+								<Setter Property="Foreground" Value="#FFDFE90A" />
+								<Setter Property="Background" Value="#FF304738" />
+							</Trigger>
+							<Trigger Property="IsPressed" Value="True">					
+								<Setter TargetName="content" Property="RenderTransform" >
+									<Setter.Value>
+										<TranslateTransform Y="1.0" />
+									</Setter.Value>
+								</Setter>
+							</Trigger>
+							<Trigger Property="IsDefaulted" Value="True">
+								<Setter TargetName="border" Property="BorderBrush" Value="#FF282828" />
+							</Trigger>
+							<Trigger Property="IsFocused" Value="True">
+								<Setter TargetName="border" Property="BorderBrush" Value="#FF282828" />
+							</Trigger>
+							<Trigger Property="IsEnabled" Value="False">
+								<Setter TargetName="border" Property="Opacity" Value="0.7" />
+								<Setter Property="Foreground" Value="Gray" />
+							</Trigger>
+
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<LinearGradientBrush x:Key="GreenChrome" EndPoint="0.5,1" StartPoint="0.5,0">
+			<GradientStop Color="#FF9FA29D" Offset="1"/>
+			<GradientStop Color="White"/>
+			<GradientStop Color="#FFFBFFF8" Offset="0.836"/>
+			<GradientStop Color="#FEC1C7BD" Offset="0.573"/>
+			<GradientStop Color="#FF3F443C" Offset="0.922"/>
+			<GradientStop Color="#FE4A5147" Offset="0.082"/>
+			<GradientStop Color="#FEE3EDDE" Offset="0.138"/>
+		</LinearGradientBrush>
+
+
+
+		<Style BasedOn="{x:Null}" TargetType="{x:Type Button}" x:Key="Button_Theme">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type Button}">
+						<ControlTemplate.Resources>
+							<Storyboard x:Key="over">
+								<ThicknessAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="title" Storyboard.TargetProperty="(FrameworkElement.Margin)">
+									<SplineThicknessKeyFrame KeyTime="00:00:00" Value="0"/>
+									<SplineThicknessKeyFrame KeySpline="0.5,0,0.5,1" KeyTime="00:00:00.5000000" Value="0,-60,0,0"/>
+									<SplineThicknessKeyFrame KeyTime="00:00:00.7000000" Value="0,-55,0,0"/>
+								</ThicknessAnimationUsingKeyFrames>
+								<ThicknessAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="titleOver" Storyboard.TargetProperty="(FrameworkElement.Margin)">
+									<SplineThicknessKeyFrame KeyTime="00:00:00" Value="0,0,0,-55"/>
+									<SplineThicknessKeyFrame KeyTime="00:00:00.5000000" Value="0,0,0,5" KeySpline="0.5,0,0.5,1"/>
+									<SplineThicknessKeyFrame KeyTime="00:00:00.7000000" Value="0"/>
+								</ThicknessAnimationUsingKeyFrames>
+							</Storyboard>
+							<Storyboard x:Key="overBack">
+								<ThicknessAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="title" Storyboard.TargetProperty="(FrameworkElement.Margin)">
+									<SplineThicknessKeyFrame KeyTime="00:00:00" Value="0,-55,0,0"/>
+									<SplineThicknessKeyFrame KeySpline="0.5,0,0.5,1" KeyTime="00:00:00.5000000" Value="0,5,0,0"/>
+									<SplineThicknessKeyFrame KeyTime="00:00:00.7000000" Value="0"/>
+								</ThicknessAnimationUsingKeyFrames>
+								<ThicknessAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="titleOver" Storyboard.TargetProperty="(FrameworkElement.Margin)">
+									<SplineThicknessKeyFrame KeyTime="00:00:00" Value="0"/>
+									<SplineThicknessKeyFrame KeySpline="0.5,0,0.5,1" KeyTime="00:00:00.5000000" Value="0,0,0,-60"/>
+									<SplineThicknessKeyFrame KeyTime="00:00:00.7000000" Value="0,0,0,-55"/>
+								</ThicknessAnimationUsingKeyFrames>
+							</Storyboard>
+							<Storyboard x:Key="press">
+								<ObjectAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="bgPress" Storyboard.TargetProperty="(UIElement.Visibility)">
+									<DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Visible}"/>
+									<DiscreteObjectKeyFrame KeyTime="00:00:00.7000000" Value="{x:Static Visibility.Visible}"/>
+								</ObjectAnimationUsingKeyFrames>
+								<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="bgPress" Storyboard.TargetProperty="(UIElement.Opacity)">
+									<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+									<SplineDoubleKeyFrame KeyTime="00:00:00.4000000" Value="1"/>
+									<SplineDoubleKeyFrame KeyTime="00:00:00.7000000" Value="0"/>
+								</DoubleAnimationUsingKeyFrames>
+							</Storyboard>
+							<Storyboard x:Key="overline">
+								<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="bg" Storyboard.TargetProperty="(Shape.Stroke).(Brush.RelativeTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+									<SplineDoubleKeyFrame KeyTime="00:00:00" Value="-1.061"/>
+									<SplineDoubleKeyFrame KeyTime="00:00:01.1000000" Value="1.024"/>
+									<SplineDoubleKeyFrame KeyTime="00:00:02.5000000" Value="1.024"/>
+								</DoubleAnimationUsingKeyFrames>
+								<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="bg" Storyboard.TargetProperty="(Shape.Stroke).(Brush.RelativeTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+									<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+									<SplineDoubleKeyFrame KeyTime="00:00:01.1000000" Value="0.001"/>
+									<SplineDoubleKeyFrame KeyTime="00:00:02.5000000" Value="0.001"/>
+								</DoubleAnimationUsingKeyFrames>
+							</Storyboard>
+						</ControlTemplate.Resources>
+						<Grid x:Name="grid" ClipToBounds="True">
+							<Rectangle RadiusX="2" RadiusY="2" x:Name="bg" Fill="{TemplateBinding Background}">
+								<Rectangle.Stroke>
+									<LinearGradientBrush EndPoint="1.04,0.5" StartPoint="-0.01,0.5">
+										<LinearGradientBrush.RelativeTransform>
+											<TransformGroup>
+												<ScaleTransform CenterX="0.5" CenterY="0.5"/>
+												<SkewTransform CenterX="0.5" CenterY="0.5"/>
+												<RotateTransform CenterX="0.5" CenterY="0.5"/>
+												<TranslateTransform/>
+											</TransformGroup>
+										</LinearGradientBrush.RelativeTransform>
+										<GradientStop Color="#FF595959" Offset="0"/>
+										<GradientStop Color="White" Offset="0.7"/>
+										<GradientStop Color="#FF303030" Offset="1"/>
+									</LinearGradientBrush>
+								</Rectangle.Stroke>
+							</Rectangle>
+							<Rectangle Stroke="{x:Null}" RadiusX="2" RadiusY="2" x:Name="bgBling" Margin="2,2,2,20">
+								<Rectangle.Fill>
+									<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+										<GradientStop Color="#00FFFFFF" Offset="1"/>
+										<GradientStop Color="#B2FFFFFF" Offset="0"/>
+									</LinearGradientBrush>
+								</Rectangle.Fill>
+							</Rectangle>
+							<TextBlock x:Name="title" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="{TemplateBinding Content}"/>
+							<Rectangle RadiusX="8" RadiusY="8" x:Name="bgPress" StrokeThickness="2" Visibility="Hidden" RenderTransformOrigin="0.5,0.5" Fill="{x:Null}" d:CopyToken="803fb051-7927-4812-be8c-c89ef9381dd4">
+								<Rectangle.RenderTransform>
+									<TransformGroup>
+										<ScaleTransform/>
+										<SkewTransform/>
+										<RotateTransform/>
+										<TranslateTransform/>
+									</TransformGroup>
+								</Rectangle.RenderTransform>
+								<Rectangle.Stroke>
+									<LinearGradientBrush EndPoint="0.967,1.042" StartPoint="0.076,-0.042">
+										<LinearGradientBrush.RelativeTransform>
+											<TransformGroup>
+												<ScaleTransform CenterX="0.5" CenterY="0.5"/>
+												<SkewTransform CenterX="0.5" CenterY="0.5"/>
+												<RotateTransform CenterX="0.5" CenterY="0.5"/>
+												<TranslateTransform X="-0.458"/>
+											</TransformGroup>
+										</LinearGradientBrush.RelativeTransform>
+										<GradientStop Offset="1" Color="White"/>
+										<GradientStop Color="White"/>
+									</LinearGradientBrush>
+								</Rectangle.Stroke>
+							</Rectangle>
+							<TextBlock x:Name="titleOver" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="{TemplateBinding Content}" Margin="0,0,0,-60" FontWeight="Bold" FontSize="14.667" FontFamily="Arial"/>
+						</Grid>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Trigger.ExitActions>
+									<BeginStoryboard x:Name="overBack_BeginStoryboard" Storyboard="{StaticResource overBack}"/>
+									<StopStoryboard BeginStoryboardName="overline_BeginStoryboard"/>
+								</Trigger.ExitActions>
+								<Trigger.EnterActions>
+									<BeginStoryboard Storyboard="{StaticResource over}"/>
+									<BeginStoryboard x:Name="overline_BeginStoryboard" Storyboard="{StaticResource overline}"/>
+								</Trigger.EnterActions>
+							</Trigger>
+							<Trigger Property="IsPressed" Value="True">
+								<Trigger.EnterActions>
+									<BeginStoryboard x:Name="press_BeginStoryboard" Storyboard="{StaticResource press}"/>
+								</Trigger.EnterActions>
+								<Setter Property="Stroke" TargetName="bgPress">
+									<Setter.Value>
+										<LinearGradientBrush EndPoint="0.967,1.042" StartPoint="0.076,-0.042">
+											<LinearGradientBrush.RelativeTransform>
+												<TransformGroup>
+													<ScaleTransform CenterX="0.5" CenterY="0.5"/>
+													<SkewTransform CenterX="0.5" CenterY="0.5"/>
+													<RotateTransform CenterX="0.5" CenterY="0.5"/>
+													<TranslateTransform X="-0.458"/>
+												</TransformGroup>
+											</LinearGradientBrush.RelativeTransform>
+											<GradientStop Offset="0"/>
+											<GradientStop Offset="1"/>
+										</LinearGradientBrush>
+									</Setter.Value>
+								</Setter>
+							</Trigger>
+							<Trigger Property="IsEnabled" Value="False"/>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" MappingMode="RelativeToBoundingBox">
+						<GradientStop Color="#FFF0F0F0" Offset="0.149"/>
+						<GradientStop Color="#FF9F9F9F" Offset="1"/>
+						<GradientStop Color="#FFA8A8A8" Offset="0"/>
+						<GradientStop Color="White" Offset="0.335"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<LinearGradientBrush x:Key="DarkChrome" EndPoint="0.996,0.5" StartPoint="0.036,0.5">
+			<GradientStop Color="#FF727272" Offset="0"/>
+			<GradientStop Color="#FFBEB9B9" Offset="0.495"/>
+			<GradientStop Color="#FF727272" Offset="1"/>
+		</LinearGradientBrush>
+
+
+
+	</Window.Resources>
+
+	<Grid x:Name="LayoutRoot" DataContext="{Binding Mode=OneWay, Source={StaticResource Locator}}">
+		<Border Margin="0" CornerRadius="12">
+			<Border.Background>
+				<ImageBrush Stretch="UniformToFill" ImageSource="/TuneNazity;component/Images/TuneNazity-9.png"/>
+			</Border.Background>
+			<Border BorderThickness="3" CornerRadius="12" BorderBrush="{DynamicResource GreenChrome}">
+				<Border.Background>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+						<GradientStop Color="#7FA2A2A2" Offset="0"/>
+						<GradientStop Color="#7F807E7E" Offset="1"/>
+						<GradientStop Color="#FF2C2929" Offset="0.03"/>
+						<GradientStop Color="#FF424242" Offset="0.978"/>
+						<GradientStop Color="#7F2F2F2F" Offset="0.513"/>
+						<GradientStop Color="#8D2C2C2C" Offset="0.125"/>
+						<GradientStop Color="#95323232" Offset="0.927"/>
+					</LinearGradientBrush>
+
+
+				</Border.Background>
+				<i:Interaction.Triggers>
+					<i:EventTrigger EventName="MouseLeftButtonDown">
+						<Command:EventToCommand Command="{Binding Main.DragStartDialog, Mode=OneWay}"/>
+					</i:EventTrigger>
+				</i:Interaction.Triggers>
+				<Grid Margin="7" DataContext="{Binding Main, Mode=OneWay}">
+					<TextBlock x:Name="tbMessage" HorizontalAlignment="Left" Height="199.577" Margin="10,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="17.333" Foreground="#FFD4CD7D" FontFamily="/TuneNazity;component/Fonts/#Segoe UI Semibold" ToolTip="" Width="364"/>
+					<Image x:Name="imgClose" HorizontalAlignment="Left" Height="78.5" Margin="362.5,19,0,0" VerticalAlignment="Top" Width="73.5" Stretch="UniformToFill" Source="/TuneNazity;component/Images/Info.png" RenderTransformOrigin="0.5,0.5" ToolTip="Quit Program">
+						<Image.RenderTransform>
+							<TransformGroup>
+								<ScaleTransform/>
+								<SkewTransform/>
+								<RotateTransform/>
+								<TranslateTransform/>
+							</TransformGroup>
+						</Image.RenderTransform>
+					</Image>
+					<Button x:Name="Start" Content="OK"  Style="{DynamicResource Button_Theme}" Margin="72.356,233.577,0,0" FontSize="14.667" IsCancel="True" DataContext="{Binding Source={StaticResource Locator}}" FontFamily="Arial" Height="36.423" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126" >
+						<i:Interaction.Triggers>
+							<i:EventTrigger EventName="Click">
+								<Command:EventToCommand Command="{Binding MainStatic.DialogAnswerYes, Mode=OneWay}"/>
+							</i:EventTrigger>
+						</i:Interaction.Triggers>
+					</Button>
+					<Button x:Name="Exit" Content="CANCEL" IsCancel="True" Style="{DynamicResource Button_Theme}" Margin="245.356,233.577,0,0" FontSize="14.667" FontFamily="Arial" HorizontalAlignment="Left" Width="126" Height="36.423" VerticalAlignment="Top"/>
+				</Grid>
+			</Border>
+		</Border>
+	</Grid>
+</Window>
