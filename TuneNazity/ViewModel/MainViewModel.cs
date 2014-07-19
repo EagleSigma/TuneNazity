@@ -1284,10 +1284,12 @@ namespace TuneNazity.ViewModel
 
                         if ((e.ErrorCode & 0xFFFF) == 0xC472 || e.ErrorCode == -2147417846)
                         {
+
                             // iTunes is busy
                             System.Threading.Thread.Sleep(500); // Wait, and...
-
                             TrackName = "iTunes is busy.  Please close any dialog or messages pending....";
+
+                            Debug.Write("Error detected: " + e.Message);
 
                             // Reset Counter or progress bar will be off
                             //                                                 
@@ -1749,6 +1751,8 @@ namespace TuneNazity.ViewModel
                             // iTunes is busy
                             System.Threading.Thread.Sleep(500); // Wait, and...
 
+                            Debug.Write("Error detected: " + e.Message);
+
                             TrackName =
                                 "iTunes is busy.  Please close any dialog or messages pending....";
 
@@ -2112,6 +2116,8 @@ namespace TuneNazity.ViewModel
                             DeadTracksFound = "";
                             TrackLocation = "";
                             CurrentProgress = 0;
+
+                            Debug.Write("Error detected: " + e.Message);
 
                             success = false; // ...try again
                         }
@@ -2683,6 +2689,8 @@ namespace TuneNazity.ViewModel
 
                                 CurrentTrack = "iTunes is busy.  Please close any dialog or messages pending....";
 
+                                Debug.Write("Error detected: " + ex.Message);
+
                                 // Reset Counter or progress bar will be off
                                 //                                                 
                                 success = false; // ...try again
@@ -2842,6 +2850,12 @@ namespace TuneNazity.ViewModel
                         ClearLowRatedDeadTracksCheckBoxVisibility = Visibility.Hidden;
 
 
+                        // Create the regular expression to find all songs with Alphanumeric Names
+                        System.Text.RegularExpressions.Regex searchSongType =
+                            new System.Text.RegularExpressions.Regex(@"^\x00-\x7F");
+
+
+
 
                         // Translate XML Library into LINQ Supported IENUMERABLE Collection
                         //
@@ -2929,6 +2943,9 @@ namespace TuneNazity.ViewModel
                             System.Threading.Thread.Sleep(500); // Wait, and...
                             TrackName =
                                 "iTunes is busy.  Please close any dialog or messages pending....";
+
+                            Debug.Write("Error detected: " + e.Message);
+
                             success = false; // ...try again
                         }
                         else
@@ -3022,24 +3039,40 @@ namespace TuneNazity.ViewModel
 
                 try
                 {
-                    rawsongs =
-                              from song in
-                                  XDocument.Load(filename).Descendants("plist").Elements("dict").Elements("dict").Elements("dict")
-                              select new XElement("song",
-                              from key in song.Descendants("key")
-                              select new XElement(((string)key).Replace(" ", ""),
-                                                      (string)(XElement)key.NextNode));
 
-                    // All Done
-                    success = true;
+                    // Use Text Encoding To Prevent language Errors when loading the XML file
+                    //
+                    using (System.IO.StreamReader oReader = new System.IO.StreamReader(filename, System.Text.Encoding.GetEncoding("ISO-8859-1")))
+                    {                     
+                    
+                        rawsongs =
+                                  from song in
+                                      XDocument.Load(oReader).Descendants("plist").Elements("dict").Elements("dict").Elements("dict")
+                                  select new XElement("song",
+                                  from key in song.Descendants("key")
+                                  select new XElement(((string)key).Replace(" ", ""),
+                                                          (string)(XElement)key.NextNode));
 
+                        // All Done
+                        success = true;
+                    }
 
 
                 }
                 catch (Exception ex)
                 {
                     TrackName = "iTunes is busy.  Please close any dialog or messages pending. \n" + ex.Message;
+
+                    Debug.Write("Error detected: " + ex.Message);
+
+                    // Continue to next file if the song name contains a non alphanumeric character
+                    //
+                    if (ex.Message.Contains("invalid character"))
+                        continue;
+
+
                     System.Threading.Thread.Sleep(500);
+
 
                 }
 
